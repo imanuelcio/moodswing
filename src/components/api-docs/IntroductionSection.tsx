@@ -2,7 +2,6 @@ import { ArrowRight, BookOpen, Globe, Terminal, Zap } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 
-// ==================== SECTION: INTRODUCTION ====================
 const IntroductionSection = () => (
   <div className="space-y-6">
     <div className="space-y-4">
@@ -56,7 +55,7 @@ const IntroductionSection = () => (
         },
       ].map((feature, idx) => (
         <div
-          key={feature.title}
+          key={idx}
           className="glass-card p-6 rounded-xl border border-border hover:border-primary/50 transition-all"
         >
           {/* <feature.icon className="h-8 w-8 text-primary mb-3" /> */}

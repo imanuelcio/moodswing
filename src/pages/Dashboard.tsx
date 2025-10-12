@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Footer } from "@/components/Footer";
 import { PredictionCard } from "@/components/PredictionCard";
@@ -7,9 +6,10 @@ import { motion } from "framer-motion";
 import { Trophy, Flame, TrendingUp } from "lucide-react";
 
 const Dashboard = () => {
-  const [streak, setStreak] = useState(7);
-  const [points, setPoints] = useState(3450);
-
+  // const [streak, setStreak] = useState(7);
+  // const [points, setPoints] = useState(3450);
+  let streak = 7;
+  let points = 3450;
   const mockTrends = [
     {
       tag: "#BitcoinHype",

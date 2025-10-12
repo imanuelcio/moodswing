@@ -8,7 +8,7 @@ interface CodeBlockProps {
   id: string;
 }
 
-const CodeBlock = ({ code, language = "bash", id }: CodeBlockProps) => {
+const CodeBlock = ({ code, language = "bash" }: CodeBlockProps) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
