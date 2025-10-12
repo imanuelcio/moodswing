@@ -1,0 +1,106 @@
+/* Tailwind v4 */
+@import "tailwindcss";
+
+/* ===== Theme Tokens (colors, radius, fonts) ===== */
+@theme {
+  /* colors => agar bg-background, text-foreground, border-border, dst. berfungsi */
+  --color-background: hsl(0 0% 6%);
+  --color-foreground: hsl(240 5% 88%);
+
+  --color-card: hsl(0 0% 7%);
+  --color-card-foreground: hsl(240 5% 88%);
+
+  --color-popover: hsl(0 0% 6%);
+  --color-popover-foreground: hsl(240 5% 88%);
+
+  --color-primary: hsl(0 75% 55%);
+  --color-primary-foreground: hsl(240 5% 88%);
+
+  --color-secondary: hsl(259 60% 55%);
+  --color-secondary-foreground: hsl(240 5% 88%);
+
+  --color-muted: hsl(0 0% 20%);
+  --color-muted-foreground: hsl(240 5% 60%);
+
+  --color-accent: hsl(149 55% 53%);
+  --color-accent-foreground: hsl(240 5% 88%);
+
+  --color-destructive: hsl(0 75% 55%);
+  --color-destructive-foreground: hsl(240 5% 88%);
+
+  --color-border: hsl(0 0% 20%);
+  --color-input: hsl(0 0% 20%);
+  --color-ring: hsl(0 75% 55%);
+
+  /* radii (opsional, dipakai oleh kelas rounded-* kalau kamu override) */
+  --radius: 1rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+
+  /* fonts (agar class `font-exo` & `font-orbitron` tersedia) */
+  --font-exo: "Exo 2", system-ui, sans-serif;
+  --font-orbitron: "Orbitron", system-ui, sans-serif;
+
+  /* timing util (kalau mau dipakai di CSS kustom) */
+  --transition-normal: 250ms;
+}
+
+/* ===== Base style ===== */
+*,
+::before,
+::after {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground antialiased font-exo;
+}
+
+:where(h1, h2, h3, h4, h5, h6) {
+  @apply font-orbitron font-bold;
+  letter-spacing: -0.02em; /* tracking-[-0.02em] juga bisa */
+}
+
+/* ===== Utilities kustom ===== */
+/* v4 mendukung @utility, tapi class biasa juga oke. Pilih salah satu gaya. */
+
+/* Versi class biasa */
+.glass-card {
+  /* pakai utility agar konsisten dengan Tailwind */
+  @apply bg-black/50 border border-white/10 backdrop-blur-[12px];
+}
+
+.neon-glow-red {
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.3), 0 0 40px rgba(220, 38, 38, 0.1);
+}
+
+.neon-glow-indigo {
+  box-shadow: 0 0 20px rgba(79, 70, 229, 0.3), 0 0 40px rgba(79, 70, 229, 0.1);
+}
+
+.text-glow-red {
+  text-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+}
+
+.border-neon-red {
+  border-color: var(--color-primary);
+}
+
+.hover-neon-glow {
+  transition: all var(--transition-normal) ease-out;
+}
+
+.hover-neon-glow:hover {
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.5), 0 0 40px rgba(220, 38, 38, 0.2),
+    inset 0 0 20px rgba(220, 38, 38, 0.1);
+}
+
+/* font helpers (opsional karena sudah ada class font-exo & font-orbitron) */
+.font-orbitron {
+  font-family: var(--font-orbitron);
+}
+.font-exo {
+  font-family: var(--font-exo);
+}
