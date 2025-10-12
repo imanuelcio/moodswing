@@ -388,18 +388,18 @@ const Leaderboards = () => {
       metric as keyof typeof leaderboardData.week
     ] || [];
 
-  const getRankIcon = (rank: number) => {
-    switch (rank) {
-      case 1:
-        return <Crown className="h-5 w-5 text-amber-500" />;
-      case 2:
-        return <Medal className="h-5 w-5 text-slate-400" />;
-      case 3:
-        return <Award className="h-5 w-5 text-amber-700" />;
-      default:
-        return null;
-    }
-  };
+  // const getRankIcon = (rank: number) => {
+  //   switch (rank) {
+  //     case 1:
+  //       return <Crown className="h-5 w-5 text-amber-500" />;
+  //     case 2:
+  //       return <Medal className="h-5 w-5 text-slate-400" />;
+  //     case 3:
+  //       return <Award className="h-5 w-5 text-amber-700" />;
+  //     default:
+  //       return null;
+  //   }
+  // };
 
   const topThree = leaderboard.slice(0, 3);
   const restOfLeaderboard = leaderboard.slice(3);

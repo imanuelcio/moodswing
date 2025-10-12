@@ -11,22 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { motion } from "framer-motion";
-import {
-  Search,
-  Clock,
-  Users,
-  TrendingUp,
-  Activity,
-  DollarSign,
-  Target,
-  Filter,
-  BarChart3,
-  ArrowUpRight,
-  ArrowDownRight,
-  Zap,
-  Globe,
-  Trophy,
-} from "lucide-react";
+import { Search, Users, Activity, DollarSign, Target, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
