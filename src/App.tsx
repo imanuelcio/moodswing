@@ -1,7 +1,7 @@
 // import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/index";
 import Markets from "./pages/Markets";
@@ -19,9 +19,8 @@ import LegalPrivacy from "./pages/LegalPrivacy";
 import LegalTerms from "./pages/LegalTerms";
 import LegalRisk from "./pages/LegalRisk";
 import NotFound from "./pages/NotFound";
-
-const queryClient = new QueryClient();
-
+import { queryClient } from "./lib/queryclient";
+import "./lib/web3Modal"; // Initialize web3modal
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>

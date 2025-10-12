@@ -1,24 +1,43 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Wallet, Menu, X, User, Settings, LogOut, Bell } from "lucide-react";
+} from "@/components/ui/dropdown-menu";
+import {
+  Wallet,
+  Menu,
+  X,
+  User,
+  Settings,
+  LogOut,
+  Bell,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChainSelector } from "./ChainSelector";
-import { WalletConnectModal } from "./WalletConnectModal";
+import { useWeb3Modal } from "@web3modal/ethers/react";
+import { useWalletAuth } from "@/hooks/auth/useWalletAuth";
 
 export const SiteHeader = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [walletConnected, setWalletConnected] = useState(true);
-  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [unreadNotifications] = useState(3);
+
+  const {
+    address,
+    chainId,
+    isConnected,
+    isAuthenticated,
+    isAuthenticating,
+    authError,
+    disconnect,
+  } = useWalletAuth();
+  const { open } = useWeb3Modal();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -29,6 +48,20 @@ export const SiteHeader = () => {
     { href: "/api-keys", label: "API Keys" },
     { href: "/docs", label: "Docs" },
   ];
+
+  const formatAddress = (addr: string) => {
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
+
+  const getChainName = (id: number) => {
+    const chains: Record<number, string> = {
+      1: "Ethereum",
+      137: "Polygon",
+      8453: "Base",
+      42161: "Arbitrum",
+    };
+    return chains[id] || "Unknown";
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full glass-card border-b border-border">
@@ -71,12 +104,11 @@ export const SiteHeader = () => {
           ))}
         </div>
 
-        {/* Chain + Wallet + Notifications + Profile */}
+        {/* Wallet Section */}
         <div className="flex items-center gap-3">
-          <ChainSelector />
-
-          {walletConnected ? (
+          {isAuthenticated && isConnected ? (
             <>
+              {/* Notifications */}
               <Button
                 asChild
                 variant="ghost"
@@ -95,6 +127,8 @@ export const SiteHeader = () => {
                   )}
                 </Link>
               </Button>
+
+              {/* Wallet Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -103,13 +137,31 @@ export const SiteHeader = () => {
                     className="hidden sm:flex items-center gap-2 border-primary/50 hover:border-primary hover-neon-glow"
                   >
                     <Wallet className="h-4 w-4" />
-                    0x7a4b...3f9c
+                    {formatAddress(address!)}
+                    <Badge
+                      variant="secondary"
+                      className="ml-1 text-[10px] px-1.5"
+                    >
+                      {getChainName(chainId!)}
+                    </Badge>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="glass-card border-border"
+                  className="glass-card border-border w-56"
                 >
+                  <div className="px-2 py-1.5">
+                    <p className="text-xs text-muted-foreground">
+                      Connected with
+                    </p>
+                    <p className="text-sm font-mono font-semibold">
+                      {formatAddress(address!)}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {getChainName(chainId!)}
+                    </p>
+                  </div>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link
                       to="/me"
@@ -130,7 +182,7 @@ export const SiteHeader = () => {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={() => setWalletConnected(false)}
+                    onClick={disconnect}
                     className="text-destructive cursor-pointer"
                   >
                     <LogOut className="h-4 w-4 mr-2" />
@@ -144,10 +196,20 @@ export const SiteHeader = () => {
               variant="outline"
               size="sm"
               className="hidden sm:flex items-center gap-2 border-primary/50 hover:border-primary hover-neon-glow"
-              onClick={() => setWalletModalOpen(true)}
+              onClick={() => open()}
+              disabled={isAuthenticating}
             >
-              <Wallet className="h-4 w-4" />
-              Connect
+              {isAuthenticating ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Authenticating...
+                </>
+              ) : (
+                <>
+                  <Wallet className="h-4 w-4" />
+                  Connect Wallet
+                </>
+              )}
             </Button>
           )}
 
@@ -162,6 +224,16 @@ export const SiteHeader = () => {
           </Button>
         </div>
       </nav>
+
+      {/* Auth Error Banner */}
+      {authError && (
+        <div className="border-t border-border bg-destructive/10 px-4 py-2">
+          <div className="container mx-auto flex items-center gap-2 text-sm text-destructive">
+            <AlertCircle className="h-4 w-4" />
+            <span>{authError}</span>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -188,26 +260,38 @@ export const SiteHeader = () => {
                 size="sm"
                 className="w-full border-primary/50 hover:border-primary"
                 onClick={() => {
-                  if (walletConnected) {
-                    setWalletConnected(false);
+                  if (isAuthenticated) {
+                    disconnect();
                   } else {
-                    setWalletModalOpen(true);
+                    open();
                   }
                   setMobileMenuOpen(false);
                 }}
+                disabled={isAuthenticating}
               >
-                <Wallet className="h-4 w-4 mr-2" />
-                {walletConnected ? "0x7a4b...3f9c" : "Connect Wallet"}
+                {isAuthenticating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Authenticating...
+                  </>
+                ) : isAuthenticated && address ? (
+                  <>
+                    <Wallet className="h-4 w-4 mr-2" />
+                    {formatAddress(address)}
+                  </>
+                ) : (
+                  <>
+                    <Wallet className="h-4 w-4 mr-2" />
+                    Connect Wallet
+                  </>
+                )}
               </Button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      <WalletConnectModal
-        open={walletModalOpen}
-        onOpenChange={setWalletModalOpen}
-      />
     </header>
   );
 };
+
+export default SiteHeader;

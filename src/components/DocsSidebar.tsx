@@ -1,5 +1,13 @@
 import { useState } from "react";
 import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
 import {
   ChevronDown,
   ChevronRight,
@@ -16,20 +24,21 @@ import {
   Trophy,
   Users,
   Target,
+  Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-// ==================== SIDEBAR COMPONENT ====================
-const DocsSidebar = ({
-  activeSection,
-  setActiveSection,
-}: {
+
+interface DocsSidebarProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
-}) => {
+}
+
+const DocsSidebar = ({ activeSection, setActiveSection }: DocsSidebarProps) => {
   const [openSections, setOpenSections] = useState([
     "Getting Started",
     "API Endpoints",
   ]);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const docSections = [
     {
@@ -74,15 +83,21 @@ const DocsSidebar = ({
     );
   };
 
-  return (
-    <nav className="w-64 p-4 border-r border-border glass-card min-h-screen sticky top-0 h-screen overflow-y-auto">
+  const handleItemClick = (id: string) => {
+    setActiveSection(id);
+    setMobileOpen(false); // Close mobile menu when item is selected
+  };
+
+  // Sidebar Content Component (reusable for both desktop and mobile)
+  const SidebarContent = () => (
+    <div className="h-full flex flex-col">
       <div className="mb-6">
         <h2 className="font-orbitron font-bold text-lg mb-2">API Docs</h2>
         <Badge variant="outline" className="border-primary/50">
           v1.0.0
         </Badge>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-2 flex-1 overflow-y-auto">
         {docSections.map((section) => {
           const isOpen = openSections.includes(section.title);
           return (
@@ -105,7 +120,7 @@ const DocsSidebar = ({
                   {section.items.map((item) => (
                     <button
                       key={item.id}
-                      onClick={() => setActiveSection(item.id)}
+                      onClick={() => handleItemClick(item.id)}
                       className={cn(
                         "flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg transition-all",
                         activeSection === item.id
@@ -123,7 +138,39 @@ const DocsSidebar = ({
           );
         })}
       </div>
-    </nav>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="glass-card border-primary/20 hover:bg-primary/10"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-72 p-4 glass-card">
+            <SheetHeader className="mb-6">
+              <SheetTitle className="font-orbitron text-left">
+                Documentation
+              </SheetTitle>
+            </SheetHeader>
+            <SidebarContent />
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <nav className="hidden lg:block w-64 p-4 border-r border-border glass-card min-h-screen sticky top-0 h-screen overflow-y-auto">
+        <SidebarContent />
+      </nav>
+    </>
   );
 };
 

@@ -1,4 +1,3 @@
-import { SiteHeader } from "@/components/SiteHeader";
 import { LeftNav } from "@/components/LeftNav";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
@@ -48,7 +47,7 @@ const Notifications = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader />
+      {/* <SiteHeader /> */}
       <div className="flex">
         <LeftNav />
         <main className="flex-1">

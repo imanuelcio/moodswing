@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 
 const Leaderboards = () => {
-  const [period, setPeriod] = useState("month");
+  const [period, setPeriod] = useState("week");
   const [metric, setMetric] = useState("roi");
 
   // Mock data with avatars
@@ -388,19 +388,6 @@ const Leaderboards = () => {
       metric as keyof typeof leaderboardData.week
     ] || [];
 
-  // const getRankIcon = (rank: number) => {
-  //   switch (rank) {
-  //     case 1:
-  //       return <Crown className="h-5 w-5 text-amber-500" />;
-  //     case 2:
-  //       return <Medal className="h-5 w-5 text-slate-400" />;
-  //     case 3:
-  //       return <Award className="h-5 w-5 text-amber-700" />;
-  //     default:
-  //       return null;
-  //   }
-  // };
-
   const topThree = leaderboard.slice(0, 3);
   const restOfLeaderboard = leaderboard.slice(3);
 
@@ -516,7 +503,8 @@ const Leaderboards = () => {
               transition={{ delay: 0.3 }}
               className="mb-8"
             >
-              <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto">
+              {/* Desktop Podium */}
+              <div className="hidden md:grid grid-cols-3 gap-4 max-w-4xl mx-auto">
                 {/* 2nd Place */}
                 <div className="flex flex-col items-center pt-8">
                   <div className="glass-card p-6 rounded-2xl border border-border hover:border-slate-400 transition-all w-full text-center relative">
@@ -540,7 +528,7 @@ const Leaderboards = () => {
                     </div>
                     <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                       <Sparkles className="h-3 w-3" />
-                      {topThree[1].streak} day streak
+                      {topThree[1].streak}d streak
                     </div>
                   </div>
                 </div>
@@ -575,7 +563,7 @@ const Leaderboards = () => {
                       </div>
                       <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                         <Sparkles className="h-3 w-3" />
-                        {topThree[0].streak} day streak
+                        {topThree[0].streak}d streak
                       </div>
                     </div>
                   </div>
@@ -604,10 +592,97 @@ const Leaderboards = () => {
                     </div>
                     <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                       <Sparkles className="h-3 w-3" />
-                      {topThree[2].streak} day streak
+                      {topThree[2].streak}d streak
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Mobile Stack */}
+              <div className="md:hidden space-y-4">
+                {topThree.map((entry, idx) => {
+                  const isFirst = idx === 0;
+                  const isSecond = idx === 1;
+
+                  return (
+                    <div
+                      key={entry.rank}
+                      className={`glass-card p-4 rounded-xl border transition-all relative ${
+                        isFirst
+                          ? "border-2 border-amber-500 shadow-[0_0_20px_rgba(251,191,36,0.2)]"
+                          : isSecond
+                          ? "border border-slate-400"
+                          : "border border-amber-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <Avatar
+                            className={`h-16 w-16 border-4 ${
+                              isFirst
+                                ? "border-amber-500/50"
+                                : isSecond
+                                ? "border-slate-400/50"
+                                : "border-amber-700/50"
+                            }`}
+                          >
+                            <AvatarImage src={entry.avatar} />
+                            <AvatarFallback>{entry.username[0]}</AvatarFallback>
+                          </Avatar>
+                          <div
+                            className={`absolute -top-2 -right-2 rounded-full p-1.5 ${
+                              isFirst
+                                ? "bg-amber-500/20 border-2 border-amber-500"
+                                : isSecond
+                                ? "bg-slate-400/20 border-2 border-slate-400"
+                                : "bg-amber-700/20 border-2 border-amber-700"
+                            }`}
+                          >
+                            {isFirst ? (
+                              <Crown className="h-4 w-4 text-amber-500" />
+                            ) : isSecond ? (
+                              <Medal className="h-4 w-4 text-slate-400" />
+                            ) : (
+                              <Award className="h-4 w-4 text-amber-700" />
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-lg">
+                              {entry.username}
+                            </h3>
+                            {isFirst && (
+                              <Badge className="bg-amber-500/20 text-amber-500 border-amber-500/50 text-xs">
+                                Champion
+                              </Badge>
+                            )}
+                          </div>
+                          <div
+                            className={`text-2xl font-bold font-mono mb-1 ${currentMetric.color}`}
+                          >
+                            {metric === "volume" || metric === "points"
+                              ? entry.value.toLocaleString()
+                              : entry.value}
+                            {currentMetric.suffix}
+                          </div>
+                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Sparkles className="h-3 w-3" />
+                              {entry.streak}d
+                            </div>
+                            <div>{entry.totalBets} bets</div>
+                          </div>
+                        </div>
+
+                        <div className="text-3xl font-mono font-bold text-muted-foreground">
+                          #{entry.rank}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </motion.div>
           )}
@@ -626,90 +701,94 @@ const Leaderboards = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-20">Rank</TableHead>
-                      <TableHead>Trader</TableHead>
-                      <TableHead className="text-center">Streak</TableHead>
-                      <TableHead className="text-center">Bets</TableHead>
-                      <TableHead className="text-right">
-                        {currentMetric.label}
-                      </TableHead>
-                      <TableHead className="w-20"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {restOfLeaderboard.map((entry, idx) => (
-                      <motion.tr
-                        key={entry.rank}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.05 * idx }}
-                        className="hover:bg-primary/5 cursor-pointer transition-all"
-                      >
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-muted-foreground">
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-16 md:w-20">Rank</TableHead>
+                        <TableHead>Trader</TableHead>
+                        <TableHead className="text-center hidden md:table-cell">
+                          Streak
+                        </TableHead>
+                        <TableHead className="text-center hidden lg:table-cell">
+                          Bets
+                        </TableHead>
+                        <TableHead className="text-right">
+                          {currentMetric.label}
+                        </TableHead>
+                        <TableHead className="w-12 md:w-20"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {restOfLeaderboard.map((entry, idx) => (
+                        <motion.tr
+                          key={entry.rank}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.05 * idx }}
+                          className="hover:bg-primary/5 cursor-pointer transition-all"
+                        >
+                          <TableCell>
+                            <span className="font-mono font-bold text-muted-foreground text-sm md:text-base">
                               #{entry.rank}
                             </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-10 w-10 border-2 border-border">
-                              <AvatarImage src={entry.avatar} />
-                              <AvatarFallback>
-                                {entry.username[0].toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <div className="font-medium">
-                                {entry.username}
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                Rank #{entry.rank}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2 md:gap-3">
+                              <Avatar className="h-8 w-8 md:h-10 md:w-10 border-2 border-border">
+                                <AvatarImage src={entry.avatar} />
+                                <AvatarFallback>
+                                  {entry.username[0].toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div className="font-medium text-sm md:text-base truncate max-w-[120px] md:max-w-none">
+                                  {entry.username}
+                                </div>
+                                <div className="text-xs text-muted-foreground md:hidden">
+                                  {entry.streak}🔥 • {entry.totalBets}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge
-                            variant="outline"
-                            className="font-mono text-xs"
-                          >
-                            {entry.streak} 🔥
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <span className="text-sm text-muted-foreground">
-                            {entry.totalBets}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Badge
-                            variant="secondary"
-                            className={`font-mono ${currentMetric.color}`}
-                          >
-                            {metric === "volume" || metric === "points"
-                              ? entry.value.toLocaleString()
-                              : entry.value}
-                            {currentMetric.suffix}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                          >
-                            <ArrowUpRight className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </motion.tr>
-                    ))}
-                  </TableBody>
-                </Table>
+                          </TableCell>
+                          <TableCell className="text-center hidden md:table-cell">
+                            <Badge
+                              variant="outline"
+                              className="font-mono text-xs"
+                            >
+                              {entry.streak} 🔥
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-center hidden lg:table-cell">
+                            <span className="text-sm text-muted-foreground">
+                              {entry.totalBets}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Badge
+                              variant="secondary"
+                              className={`font-mono text-xs md:text-sm ${currentMetric.color}`}
+                            >
+                              {metric === "volume" || metric === "points"
+                                ? entry.value.toLocaleString()
+                                : entry.value}
+                              {currentMetric.suffix}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 hidden md:flex"
+                            >
+                              <ArrowUpRight className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </motion.tr>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
