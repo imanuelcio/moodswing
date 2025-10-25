@@ -21,7 +21,6 @@ import {
   Wallet,
   Link as LinkIcon,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const Profile = () => {
   // Mock user data - replace with React Query API calls
@@ -122,14 +121,6 @@ const Profile = () => {
             <p className="text-muted-foreground">
               Manage your account and view your stats
             </p>
-            <div className="mt-4">
-              <Button asChild variant="outline" size="sm">
-                <Link to="/me/create" className="flex items-center gap-2">
-                  <Trophy className="h-4 w-4" />
-                  Create Market
-                </Link>
-              </Button>
-            </div>
           </div>
 
           {/* Stats Grid */}

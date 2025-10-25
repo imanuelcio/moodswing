@@ -5,7 +5,7 @@ export function useGenerateNonce() {
   return useMutation({
     mutationFn: async (params: {
       address: string;
-      chainKind: "evm" | "solana";
+      chainKind: "ethereum" | "solana";
       domain: string;
     }) => {
       const { address, chainKind, domain } = params;
@@ -19,7 +19,7 @@ export function useVerifySignature() {
   return useMutation({
     mutationFn: (params: {
       address: string;
-      chainKind: "evm" | "solana";
+      chainKind: "ethereum" | "solana";
       nonce: string;
       domain: string;
       signature: string;

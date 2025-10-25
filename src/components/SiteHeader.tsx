@@ -23,6 +23,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useWeb3Modal } from "@web3modal/ethers/react";
 import { useWalletAuth } from "@/hooks/auth/useWalletAuth";
+import { formatAddress, getChainName } from "@/utils/format";
+import { navLinks } from "@/constants";
 
 export const SiteHeader = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -38,30 +40,6 @@ export const SiteHeader = () => {
     disconnect,
   } = useWalletAuth();
   const { open } = useWeb3Modal();
-
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/markets", label: "Markets" },
-    { href: "/leaderboards", label: "Leaderboards" },
-    { href: "/mint", label: "List NFT" },
-    { href: "/dashboard", label: "Dashboard" },
-    { href: "/api-keys", label: "API Keys" },
-    { href: "/docs", label: "Docs" },
-  ];
-
-  const formatAddress = (addr: string) => {
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-  };
-
-  const getChainName = (id: number) => {
-    const chains: Record<number, string> = {
-      1: "Ethereum",
-      137: "Polygon",
-      8453: "Base",
-      42161: "Arbitrum",
-    };
-    return chains[id] || "Unknown";
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full glass-card border-b border-border">

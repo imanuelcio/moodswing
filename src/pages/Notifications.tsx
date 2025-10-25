@@ -1,9 +1,10 @@
-import { LeftNav } from "@/components/LeftNav";
+// import { LeftNav } from "@/components/LeftNav";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCheck, TrendingUp, Award, AlertCircle } from "lucide-react";
+import SiteHeader from "@/components/SiteHeader";
 
 const Notifications = () => {
   // Mock data - replace with React Query GET /notifications
@@ -47,9 +48,9 @@ const Notifications = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* <SiteHeader /> */}
+      <SiteHeader />
       <div className="flex">
-        <LeftNav />
+        {/* <LeftNav /> */}
         <main className="flex-1">
           <div className="container mx-auto px-4 py-8 max-w-4xl">
             <div className="flex items-center justify-between mb-8">

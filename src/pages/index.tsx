@@ -177,14 +177,14 @@ const Index = () => {
                     <ArrowUpRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
-                <Button
+                {/* <Button
                   asChild
                   size="lg"
                   variant="outline"
                   className="border-primary/50 hover:border-primary hover-neon-glow"
                 >
                   <Link to="/mint">Mint NFT</Link>
-                </Button>
+                </Button> */}
               </div>
 
               {/* Stats */}
@@ -357,7 +357,7 @@ const Index = () => {
         </section>
 
         {/* Live Trends */}
-        <section className="container mx-auto px-4 py-16">
+        {/* <section className="container mx-auto px-4 py-16">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -394,7 +394,7 @@ const Index = () => {
               ))}
             </div>
           </motion.div>
-        </section>
+        </section> */}
 
         {/* Retail Features */}
         <section className="container mx-auto px-4 py-16 bg-gradient-to-b from-transparent to-primary/5">

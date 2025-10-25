@@ -7,20 +7,21 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 // Interceptor request (optional)
-api.interceptors.request.use(
-  (config) => {
-    // contoh tambahkan token dari localStorage
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// api.interceptors.request.use(
+//   (config) => {
+//     // contoh tambahkan token dari localStorage
+//     const token = localStorage.getItem("token");
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
 
 // Interceptor response (optional)
 api.interceptors.response.use(
