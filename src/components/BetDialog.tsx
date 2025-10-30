@@ -63,30 +63,35 @@ export const BetDialog = ({
   };
 
   const handlePlacePrediction = async () => {
+    console.log("🎯 [BET] Starting prediction bet placement...");
+    console.log("📊 [BET] Details:", {
+      marketId,
+      outcome: outcomeName,
+      direction,
+      points: parseFloat(amount),
+    });
+
     setIsProcessing(true);
 
     try {
-      // API call untuk prediction bet
-      const response = await fetch("/api/v1/bets/prediction", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          marketId,
-          outcome: outcomeName,
-          direction,
-          points: parseFloat(amount),
-        }),
+      // Import placeBet from hooks
+      const { placeBet } = await import("@/hooks/bet/api");
+
+      console.log("🔄 [BET] Calling API...");
+      const result = await placeBet({
+        market_id: parseInt(marketId),
+        outcome_id: 1, // You'll need to pass actual outcome_id
+        amount: parseFloat(amount),
       });
 
-      if (!response.ok) throw new Error("Failed to place prediction");
-
+      console.log("✅ [BET] Bet placed successfully!", result);
       toast.success("Prediction placed!", {
         description: `${direction} ${amount} points on ${outcomeName}`,
       });
 
       onOpenChange(false);
     } catch (error) {
+      console.error("❌ [BET] Failed to place bet:", error);
       toast.error("Failed to place prediction", {
         description: error instanceof Error ? error.message : "Try again later",
       });

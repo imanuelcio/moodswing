@@ -13,24 +13,24 @@
   --color-popover: hsl(0 0% 6%);
   --color-popover-foreground: hsl(240 5% 88%);
 
-  --color-primary: hsl(0 75% 55%);
-  --color-primary-foreground: hsl(240 5% 88%);
+  --color-primary: hsl(142 76% 36%);
+  --color-primary-foreground: hsl(0 0% 100%);
 
-  --color-secondary: hsl(259 60% 55%);
-  --color-secondary-foreground: hsl(240 5% 88%);
+  --color-secondary: hsl(158 64% 52%);
+  --color-secondary-foreground: hsl(0 0% 100%);
 
   --color-muted: hsl(0 0% 20%);
   --color-muted-foreground: hsl(240 5% 60%);
 
-  --color-accent: hsl(149 55% 53%);
-  --color-accent-foreground: hsl(240 5% 88%);
+  --color-accent: hsl(142 76% 36%);
+  --color-accent-foreground: hsl(0 0% 100%);
 
   --color-destructive: hsl(0 75% 55%);
   --color-destructive-foreground: hsl(240 5% 88%);
 
-  --color-border: hsl(0 0% 20%);
-  --color-input: hsl(0 0% 20%);
-  --color-ring: hsl(0 75% 55%);
+  --color-border: hsl(142 20% 20%);
+  --color-input: hsl(142 20% 20%);
+  --color-ring: hsl(142 76% 36%);
 
   /* radii (opsional, dipakai oleh kelas rounded-* kalau kamu override) */
   --radius: 1rem;
@@ -73,18 +73,30 @@ body {
 }
 
 .neon-glow-red {
-  box-shadow: 0 0 20px rgba(220, 38, 38, 0.3), 0 0 40px rgba(220, 38, 38, 0.1);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3), 0 0 40px rgba(34, 197, 94, 0.1);
+}
+
+.neon-glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3), 0 0 40px rgba(34, 197, 94, 0.1);
 }
 
 .neon-glow-indigo {
-  box-shadow: 0 0 20px rgba(79, 70, 229, 0.3), 0 0 40px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3), 0 0 40px rgba(16, 185, 129, 0.1);
 }
 
 .text-glow-red {
-  text-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+  text-shadow: 0 0 20px rgba(34, 197, 94, 0.6), 0 0 30px rgba(34, 197, 94, 0.3);
+}
+
+.text-glow-green {
+  text-shadow: 0 0 20px rgba(34, 197, 94, 0.6), 0 0 30px rgba(34, 197, 94, 0.3);
 }
 
 .border-neon-red {
+  border-color: var(--color-primary);
+}
+
+.border-neon-green {
   border-color: var(--color-primary);
 }
 
@@ -93,8 +105,8 @@ body {
 }
 
 .hover-neon-glow:hover {
-  box-shadow: 0 0 20px rgba(220, 38, 38, 0.5), 0 0 40px rgba(220, 38, 38, 0.2),
-    inset 0 0 20px rgba(220, 38, 38, 0.1);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.5), 0 0 40px rgba(34, 197, 94, 0.2),
+    inset 0 0 20px rgba(34, 197, 94, 0.1);
 }
 
 /* font helpers (opsional karena sudah ada class font-exo & font-orbitron) */

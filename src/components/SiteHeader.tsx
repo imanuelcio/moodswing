@@ -65,7 +65,7 @@ export const SiteHeader = () => {
             </defs>
           </svg>
           <span className="font-orbitron text-xl font-bold text-glow-red">
-            MOOD SWING
+            moodz.fun
           </span>
         </Link>
 

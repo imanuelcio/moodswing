@@ -77,11 +77,15 @@ export const Markets = () => {
 
   useEffect(() => {
     const fetchMarkets = async () => {
+      console.log("🎯 [MARKETS] Fetching markets from API...");
       try {
         setIsLoading(true);
         const data = await getMarkets();
+        console.log("✅ [MARKETS] Markets fetched successfully:", data.markets.length, "markets");
+        console.log("📊 [MARKETS] First market:", data.markets[0]);
         setMarkets(data.markets);
       } catch (err) {
+        console.error("❌ [MARKETS] Failed to fetch markets:", err);
         setError(
           err instanceof Error ? err.message : "Failed to fetch markets"
         );
