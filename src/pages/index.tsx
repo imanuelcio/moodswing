@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Footer } from "@/components/Footer";
-import { PredictionCard } from "@/components/PredictionCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
@@ -67,29 +66,29 @@ const Index = () => {
     };
   }, []);
 
-  const mockTrends = [
-    {
-      tag: "#BitcoinHype",
-      score: 82,
-      change: 6,
-      chain: "Solana",
-      volume: "$2.4M",
-    },
-    {
-      tag: "#ETHMerge",
-      score: 76,
-      change: -3,
-      chain: "Ethereum",
-      volume: "$1.8M",
-    },
-    {
-      tag: "#AIBoom",
-      score: 91,
-      change: 12,
-      chain: "Polygon",
-      volume: "$3.2M",
-    },
-  ];
+  // const mockTrends = [
+  //   {
+  //     tag: "#BitcoinHype",
+  //     score: 82,
+  //     change: 6,
+  //     chain: "Solana",
+  //     volume: "$2.4M",
+  //   },
+  //   {
+  //     tag: "#ETHMerge",
+  //     score: 76,
+  //     change: -3,
+  //     chain: "Ethereum",
+  //     volume: "$1.8M",
+  //   },
+  //   {
+  //     tag: "#AIBoom",
+  //     score: 91,
+  //     change: 12,
+  //     chain: "Polygon",
+  //     volume: "$3.2M",
+  //   },
+  // ];
 
   const marqueeItems = [
     { label: "Active Markets", value: "247", icon: Activity },

@@ -13,15 +13,8 @@ import {
 import { motion } from "framer-motion";
 import {
   Search,
-  Users,
-  Activity,
-  DollarSign,
-  Target,
-  Zap,
   Loader2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { getMarkets } from "@/hooks/market/api";
 
 interface Market {
@@ -54,17 +47,17 @@ interface Market {
   market_outcomes: any[];
 }
 
-interface MarketsResponse {
-  markets: Market[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-}
+// interface MarketsResponse {
+//   markets: Market[];
+//   pagination: {
+//     page: number;
+//     limit: number;
+//     total: number;
+//     totalPages: number;
+//     hasNext: boolean;
+//     hasPrev: boolean;
+//   };
+// }
 
 export const Markets = () => {
   const [statusFilter, setStatusFilter] = useState("all");
@@ -180,48 +173,48 @@ export const Markets = () => {
   };
 
   // Calculate stats from actual markets data
-  const totalVolume = sortedMarkets.reduce(
-    (acc, m) => acc + (m.id * 75000 + 500000),
-    0
-  );
-  const activeMarketsCount = sortedMarkets.filter(
-    (m) => m.status === "OPEN"
-  ).length;
-  const totalParticipants = sortedMarkets.reduce(
-    (acc, m) => acc + Math.floor(m.id * 85 + 200),
-    0
-  );
+  // const totalVolume = sortedMarkets.reduce(
+  //   (acc, m) => acc + (m.id * 75000 + 500000),
+  //   0
+  // );
+  // const activeMarketsCount = sortedMarkets.filter(
+  //   (m) => m.status === "OPEN"
+  // ).length;
+  // const totalParticipants = sortedMarkets.reduce(
+  //   (acc, m) => acc + Math.floor(m.id * 85 + 200),
+  //   0
+  // );
 
-  const stats = [
-    {
-      label: "Total Volume",
-      value: `$${(totalVolume / 1000000).toFixed(1)}M`,
-      icon: DollarSign,
-      change: "+15.3%",
-      trend: "up" as const,
-    },
-    {
-      label: "Active Markets",
-      value: activeMarketsCount.toString(),
-      icon: Activity,
-      change: `+${Math.floor(activeMarketsCount * 0.1)}`,
-      trend: "up" as const,
-    },
-    {
-      label: "Total Traders",
-      value: totalParticipants.toLocaleString(),
-      icon: Users,
-      change: `+${Math.floor(totalParticipants * 0.05)}`,
-      trend: "up" as const,
-    },
-    {
-      label: "Win Rate Avg",
-      value: "76.3%",
-      icon: Target,
-      change: "+2.1%",
-      trend: "up" as const,
-    },
-  ];
+  // const stats = [
+  //   {
+  //     label: "Total Volume",
+  //     value: `$${(totalVolume / 1000000).toFixed(1)}M`,
+  //     icon: DollarSign,
+  //     change: "+15.3%",
+  //     trend: "up" as const,
+  //   },
+  //   {
+  //     label: "Active Markets",
+  //     value: activeMarketsCount.toString(),
+  //     icon: Activity,
+  //     change: `+${Math.floor(activeMarketsCount * 0.1)}`,
+  //     trend: "up" as const,
+  //   },
+  //   {
+  //     label: "Total Traders",
+  //     value: totalParticipants.toLocaleString(),
+  //     icon: Users,
+  //     change: `+${Math.floor(totalParticipants * 0.05)}`,
+  //     trend: "up" as const,
+  //   },
+  //   {
+  //     label: "Win Rate Avg",
+  //     value: "76.3%",
+  //     icon: Target,
+  //     change: "+2.1%",
+  //     trend: "up" as const,
+  //   },
+  // ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -366,7 +359,7 @@ export const Markets = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredMarkets.map((market, idx) => (
+                  {sortedMarkets.map((market, idx) => (
                     <motion.div
                       key={market.id}
                       initial={{ opacity: 0, y: 20 }}

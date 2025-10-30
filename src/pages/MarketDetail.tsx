@@ -3,10 +3,6 @@ import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Activity,
-  DollarSign,
-  Users,
-  Trophy,
-  Clock,
   Target,
   ArrowUpRight,
   ArrowDownRight,
@@ -94,7 +90,7 @@ export const MarketDetail = () => {
   }, [id]);
 
   // Connect to SSE for real-time price updates
-  const { priceData, isConnected, error } = useMarketSSE({
+  const { priceData } = useMarketSSE({
     marketId: id || "",
     enabled: !!id && !!market,
     onUpdate: (data) => {
@@ -183,9 +179,9 @@ export const MarketDetail = () => {
 
   const selectedOutcomeData = outcomes.find((o) => o.key === selectedOutcome);
 
-  const daysUntilClose = Math.floor(
-    (new Date(market.close_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  );
+  // const daysUntilClose = Math.floor(
+  //   (new Date(market.close_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+  // );
 
   return (
     <div className="min-h-screen bg-background">
