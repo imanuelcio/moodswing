@@ -1,14 +1,5 @@
 import { motion } from "framer-motion";
-import {
-  Wallet,
-  Clock,
-  Gift,
-  TrendingDown,
-  Trophy,
-  Flame,
-  TrendingUp,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Wallet, TrendingDown, Trophy, Flame, TrendingUp } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -30,10 +21,7 @@ interface PointsWalletPanelProps {
 
 export const PointsWalletPanel = ({
   spendable,
-  expiring,
-  monthly,
   buckets,
-  onClaim,
   totalPoints = 0,
   streak = 0,
   activeBets = 0,

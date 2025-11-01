@@ -181,10 +181,7 @@ const Dashboard = () => {
               animate={{ opacity: 1, scale: 1 }}
               className="lg:col-span-5"
             >
-              <PointsWalletPanel
-                {...pointsWalletData}
-                onClaim={() => console.log("Claiming monthly points")}
-              />
+              <PointsWalletPanel {...pointsWalletData} />
             </motion.div>
 
             {/* NFT + Staking Stack */}
