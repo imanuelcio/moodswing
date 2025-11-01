@@ -210,21 +210,6 @@ export const MarketDetail = () => {
                 <Activity className="h-3 w-3 mr-1 animate-pulse" />
                 {market.status}
               </Badge>
-              {/* <Badge
-                variant="outline"
-                className={`border-border ${
-                  isConnected
-                    ? "border-green-500/50 text-green-500"
-                    : "border-red-500/50 text-red-500"
-                }`}
-              >
-                <div
-                  className={`h-2 w-2 rounded-full ${
-                    isConnected ? "bg-green-500" : "bg-red-500"
-                  } mr-2 animate-pulse`}
-                />
-                {isConnected ? "Live" : "Disconnected"}
-              </Badge> */}
             </div>
 
             {/* Title */}
@@ -236,42 +221,6 @@ export const MarketDetail = () => {
             <p className="text-muted-foreground text-base max-w-4xl mb-6">
               {market.description}
             </p>
-
-            {/* Stats Grid */}
-            {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="glass-card p-4 rounded-xl border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                  <DollarSign className="h-4 w-4" />
-                  Total Volume
-                </div>
-                <div className="text-2xl font-bold font-mono text-primary">
-                  $2.85M
-                </div>
-              </div>
-              <div className="glass-card p-4 rounded-xl border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                  <Users className="h-4 w-4" />
-                  Participants
-                </div>
-                <div className="text-2xl font-bold font-mono">1,893</div>
-              </div>
-              <div className="glass-card p-4 rounded-xl border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                  <Trophy className="h-4 w-4" />
-                  Total Bets
-                </div>
-                <div className="text-2xl font-bold font-mono">4,567</div>
-              </div>
-              <div className="glass-card p-4 rounded-xl border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                  <Clock className="h-4 w-4" />
-                  Closes In
-                </div>
-                <div className="text-2xl font-bold font-mono text-amber-500">
-                  {daysUntilClose}d
-                </div>
-              </div>
-            </div> */}
           </motion.div>
 
           {/* Main Content Grid */}

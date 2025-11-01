@@ -43,7 +43,6 @@ export const BetDialog = ({
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("wallet");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Mock user balance
   const userPoints = 5000;
   const userWalletBalance = 1250.5;
 

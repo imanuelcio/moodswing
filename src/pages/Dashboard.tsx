@@ -1,15 +1,116 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { Footer } from "@/components/Footer";
 import { PredictionCard } from "@/components/PredictionCard";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
-import { Trophy, Flame, TrendingUp } from "lucide-react";
+import { GlobalFiltersBar } from "@/components/GlobalFiltersBar";
+import { useState } from "react";
+import { TippingPanel } from "@/components/TippingPanel";
+import { MyOpenPositions } from "@/components/OpenPositions";
+import { StakingMiniPanel } from "@/components/StakingPanel";
+import { NftGateTile } from "@/components/NFTGate";
+import { PointsWalletPanel } from "@/components/PointsWalletPanel";
 
 const Dashboard = () => {
-  // const [streak, setStreak] = useState(7);
-  // const [points, setPoints] = useState(3450);
-  let streak = 7;
-  let points = 3450;
+  const [timeframe, setTimeframe] = useState("24h");
+  const [chain, setChain] = useState("all");
+  const [query, setQuery] = useState("");
+
+  // Mixed positions: Points and Real Money
+  const positions = [
+    {
+      id: "1",
+      tag: "#BitcoinHype",
+      side: "Long" as const,
+      entryScore: 75,
+      currentScore: 82,
+      etaSeconds: 3600,
+      estPayout: 450,
+      type: "points" as const,
+    },
+    {
+      id: "2",
+      tag: "#ETHMerge",
+      side: "Short" as const,
+      entryScore: 80,
+      currentScore: 76,
+      etaSeconds: 1800,
+      estPayout: 250000,
+      type: "money" as const,
+      currency: "IDR",
+    },
+    {
+      id: "3",
+      tag: "#DeFiSummer",
+      side: "Long" as const,
+      entryScore: 65,
+      currentScore: 68,
+      etaSeconds: 5400,
+      estPayout: 320,
+      type: "points" as const,
+    },
+    {
+      id: "4",
+      tag: "#AIBoom",
+      side: "Long" as const,
+      entryScore: 85,
+      currentScore: 91,
+      etaSeconds: 2700,
+      estPayout: 500000,
+      type: "money" as const,
+      currency: "IDR",
+    },
+  ];
+
+  const topCreators = [
+    {
+      id: "1",
+      handle: "@crypto_guru",
+      totalTipsIdr: 250,
+      tiktokUrl: "https://tiktok.com/@crypto_guru",
+    },
+    {
+      id: "2",
+      handle: "@nft_queen",
+      totalTipsIdr: 180,
+    },
+    {
+      id: "3",
+      handle: "@defi_master",
+      totalTipsIdr: 150,
+      tiktokUrl: "https://tiktok.com/@defi_master",
+    },
+  ];
+
+  // Staking data
+  const stakingData = {
+    aprPct: 8,
+    totalStaked: 5000,
+    earned: 320,
+  };
+
+  // NFT Gate data
+  const nftGateData = {
+    isHolder: true,
+    count: 3,
+  };
+
+  // Points Wallet data with stats
+  const pointsWalletData = {
+    spendable: 8450,
+    expiring: { amount: 1200, daysLeft: 7 },
+    monthly: { allocated: 500, claimed: false },
+    buckets: [
+      { label: "0-30 days", amount: 3000 },
+      { label: "31-60 days", amount: 2500 },
+      { label: "61-90 days", amount: 1800 },
+      { label: "90+ days", amount: 1150 },
+    ],
+    // Stats integrated
+    totalPoints: 3450,
+    streak: 7,
+    activeBets: 12,
+  };
+
   const mockTrends = [
     {
       tag: "#BitcoinHype",
@@ -39,20 +140,6 @@ const Dashboard = () => {
       chain: "Arbitrum",
       volume: "$1.2M",
     },
-    {
-      tag: "#NFTRevival",
-      score: 74,
-      change: -5,
-      chain: "Solana",
-      volume: "$980K",
-    },
-    {
-      tag: "#LayerZero",
-      score: 85,
-      change: 15,
-      chain: "Ethereum",
-      volume: "$2.9M",
-    },
   ];
 
   const leaderboard = [
@@ -64,184 +151,188 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
       <SiteHeader />
 
-      <main className="flex-1 container mx-auto px-4 py-12">
+      <main className="flex-1 container mx-auto px-4 py-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-4xl md:text-5xl font-orbitron font-bold mb-8 text-glow-red">
-            Dashboard
-          </h1>
-
-          {/* Stats */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="glass-card rounded-xl p-6 border border-border hover:border-primary/50 transition-all"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <Trophy className="h-6 w-6 text-primary" />
-                <span className="text-sm text-muted-foreground">
-                  Total Points
-                </span>
-              </div>
-              <div className="font-mono text-3xl font-bold">
-                {points.toLocaleString()}
-              </div>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="glass-card rounded-xl p-6 border border-border hover:border-accent/50 transition-all"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <Flame className="h-6 w-6 text-accent" />
-                <span className="text-sm text-muted-foreground">
-                  Win Streak
-                </span>
-              </div>
-              <div className="font-mono text-3xl font-bold text-accent">
-                {streak} days
-              </div>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="glass-card rounded-xl p-6 border border-border hover:border-secondary/50 transition-all"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <TrendingUp className="h-6 w-6 text-secondary" />
-                <span className="text-sm text-muted-foreground">
-                  Active Bets
-                </span>
-              </div>
-              <div className="font-mono text-3xl font-bold">12</div>
-            </motion.div>
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className="text-3xl md:text-4xl font-orbitron font-bold text-glow-red mb-2">
+              Dashboard
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Track your predictions, manage points, and explore trends
+            </p>
           </div>
 
-          {/* Tabs */}
-          <Tabs defaultValue="trends" className="space-y-6">
-            <TabsList className="glass-card border border-border">
-              <TabsTrigger value="trends">Trends</TabsTrigger>
-              <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
-              <TabsTrigger value="points">My Points</TabsTrigger>
-            </TabsList>
+          {/* Filters */}
+          <GlobalFiltersBar
+            timeframe={timeframe}
+            onTimeframeChange={setTimeframe}
+            chain={chain}
+            onChainChange={setChain}
+            query={query}
+            onQueryChange={setQuery}
+          />
 
-            <TabsContent value="trends" className="space-y-6">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {mockTrends.map((trend, idx) => (
-                  <motion.div
-                    key={trend.tag}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                  >
-                    <PredictionCard {...trend} />
-                  </motion.div>
-                ))}
-              </div>
-            </TabsContent>
+          {/* NEW UNIQUE LAYOUT - Bento Box Style */}
+          <div className="grid lg:grid-cols-12 gap-4 mb-4">
+            {/* Points Wallet - Large Featured */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="lg:col-span-5"
+            >
+              <PointsWalletPanel
+                {...pointsWalletData}
+                onClaim={() => console.log("Claiming monthly points")}
+              />
+            </motion.div>
 
-            <TabsContent value="leaderboard" className="space-y-6">
-              <div className="glass-card rounded-xl border border-border overflow-hidden">
-                <table className="w-full">
-                  <thead className="bg-muted/20">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-sm font-orbitron">
-                        Rank
-                      </th>
-                      <th className="px-6 py-4 text-left text-sm font-orbitron">
-                        User
-                      </th>
-                      <th className="px-6 py-4 text-right text-sm font-orbitron">
-                        Points
-                      </th>
-                      <th className="px-6 py-4 text-right text-sm font-orbitron">
-                        Streak
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {leaderboard.map((entry, idx) => (
-                      <motion.tr
-                        key={entry.rank}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className={`border-t border-border hover:bg-muted/10 transition-colors ${
-                          entry.user === "You" ? "bg-primary/5" : ""
-                        }`}
-                      >
-                        <td className="px-6 py-4 font-mono font-semibold">
-                          #{entry.rank}
-                        </td>
-                        <td className="px-6 py-4 font-mono">{entry.user}</td>
-                        <td className="px-6 py-4 text-right font-mono font-semibold">
-                          {entry.points.toLocaleString()}
-                        </td>
-                        <td className="px-6 py-4 text-right font-mono text-accent">
-                          {entry.streak} 🔥
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </TabsContent>
+            {/* NFT + Staking Stack */}
+            <div className="lg:col-span-4 space-y-4">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <NftGateTile
+                  isHolder={nftGateData.isHolder}
+                  count={nftGateData.count}
+                  onMint={() => console.log("Minting NFT")}
+                  onViewMyNfts={() => console.log("View my NFTs")}
+                />
+              </motion.div>
 
-            <TabsContent value="points" className="space-y-6">
-              <div className="glass-card rounded-xl p-8 border border-border">
-                <h3 className="font-orbitron text-2xl font-bold mb-6">
-                  Points History
-                </h3>
-                <div className="space-y-4">
-                  {[
-                    {
-                      action: "Correct prediction on #BitcoinHype",
-                      points: 150,
-                      time: "2 hours ago",
-                    },
-                    {
-                      action: "Streak bonus (7 days)",
-                      points: 70,
-                      time: "1 day ago",
-                    },
-                    {
-                      action: "Correct prediction on #AIBoom",
-                      points: 200,
-                      time: "1 day ago",
-                    },
-                    {
-                      action: "Daily login bonus",
-                      points: 10,
-                      time: "1 day ago",
-                    },
-                  ].map((item, idx) => (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <StakingMiniPanel
+                  aprPct={stakingData.aprPct}
+                  totalStaked={stakingData.totalStaked}
+                  earned={stakingData.earned}
+                  onStake={(days) => console.log(`Staking for ${days} days`)}
+                />
+              </motion.div>
+            </div>
+
+            {/* Leaderboard - Compact */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.15 }}
+              className="lg:col-span-3"
+            >
+              <div className="glass-card rounded-xl border border-border h-full overflow-hidden">
+                <div className="px-4 py-3 border-b border-border bg-muted/20">
+                  <h3 className="font-orbitron text-sm font-bold">
+                    🏆 Leaderboard
+                  </h3>
+                </div>
+                <div className="p-3 space-y-2 max-h-[400px] overflow-y-auto">
+                  {leaderboard.slice(0, 5).map((entry, idx) => (
                     <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, x: -20 }}
+                      key={entry.rank}
+                      initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.05 }}
-                      className="flex items-center justify-between p-4 rounded-lg bg-muted/10"
+                      className={`flex items-center justify-between p-2 rounded-lg transition-colors ${
+                        entry.user === "You"
+                          ? "bg-primary/10 border border-primary/30"
+                          : "bg-muted/5 hover:bg-muted/10"
+                      }`}
                     >
-                      <div>
-                        <div className="font-medium">{item.action}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {item.time}
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-xs w-6">
+                          #{entry.rank}
+                        </span>
+                        <span className="font-mono text-xs truncate">
+                          {entry.user}
+                        </span>
                       </div>
-                      <div className="font-mono text-lg font-bold text-accent">
-                        +{item.points}
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-semibold">
+                          {entry.points.toLocaleString()}
+                        </span>
                       </div>
                     </motion.div>
                   ))}
                 </div>
               </div>
-            </TabsContent>
-          </Tabs>
+            </motion.div>
+          </div>
+
+          {/* Open Positions - Full Width Featured Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mb-4"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-orbitron text-xl font-bold">
+                My Open Positions
+              </h2>
+              <div className="flex gap-2">
+                <span className="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-mono">
+                  ⚡ Points:{" "}
+                  {positions.filter((p) => p.type === "points").length}
+                </span>
+                <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30 font-mono">
+                  💰 Money: {positions.filter((p) => p.type === "money").length}
+                </span>
+              </div>
+            </div>
+            <MyOpenPositions items={positions} />
+          </motion.div>
+
+          {/* Bottom Grid - Trends & Creators */}
+          <div className="grid lg:grid-cols-3 gap-4">
+            {/* Hot Trends - 2 columns */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="lg:col-span-2"
+            >
+              <div className="mb-4">
+                <h2 className="font-orbitron text-xl font-bold">
+                  🔥 Hot Trends
+                </h2>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {mockTrends.map((trend, idx) => (
+                  <motion.div
+                    key={trend.tag}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.3 + idx * 0.05 }}
+                  >
+                    <PredictionCard {...trend} />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Top Creators - 1 column */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="lg:col-span-1"
+            >
+              <TippingPanel
+                creators={topCreators}
+                onTip={(id) => console.log("Tipping creator:", id)}
+              />
+            </motion.div>
+          </div>
         </motion.div>
       </main>
 
