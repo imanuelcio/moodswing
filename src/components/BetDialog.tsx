@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { Badge } from "./ui/badge";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Alert, AlertDescription } from "./ui/alert";
-
+// import { usePlaceBet } from "../hooks/bet/useBetMarket";
 interface BetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -379,7 +379,7 @@ export const BetDialog = ({
                 onValueChange={(v) => setPaymentMethod(v as PaymentMethod)}
               >
                 <div className="space-y-2">
-                  <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50 cursor-pointer">
+                  {/* <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50 cursor-pointer">
                     <RadioGroupItem value="wallet" id="wallet" />
                     <Label
                       htmlFor="wallet"
@@ -396,7 +396,7 @@ export const BetDialog = ({
                     {paymentMethod === "wallet" && (
                       <Check className="h-4 w-4 text-primary" />
                     )}
-                  </div>
+                  </div> */}
 
                   <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50 cursor-pointer">
                     <RadioGroupItem value="card" id="card" />
@@ -406,7 +406,7 @@ export const BetDialog = ({
                     >
                       <CreditCard className="h-4 w-4" />
                       <div>
-                        <div>Credit/Debit Card</div>
+                        <div>Global Payment Method</div>
                         <div className="text-xs text-muted-foreground">
                           Via Stripe
                         </div>
@@ -417,7 +417,7 @@ export const BetDialog = ({
                     )}
                   </div>
 
-                  <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50 cursor-pointer">
+                  {/* <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50 cursor-pointer">
                     <RadioGroupItem value="crypto" id="crypto" />
                     <Label
                       htmlFor="crypto"
@@ -434,7 +434,7 @@ export const BetDialog = ({
                     {paymentMethod === "crypto" && (
                       <Check className="h-4 w-4 text-primary" />
                     )}
-                  </div>
+                  </div> */}
                 </div>
               </RadioGroup>
             </div>

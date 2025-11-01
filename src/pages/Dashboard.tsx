@@ -2,8 +2,6 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { Footer } from "@/components/Footer";
 import { PredictionCard } from "@/components/PredictionCard";
 import { motion } from "framer-motion";
-import { GlobalFiltersBar } from "@/components/GlobalFiltersBar";
-import { useState } from "react";
 import { TippingPanel } from "@/components/TippingPanel";
 import { MyOpenPositions } from "@/components/OpenPositions";
 import { StakingMiniPanel } from "@/components/StakingPanel";
@@ -11,10 +9,6 @@ import { NftGateTile } from "@/components/NFTGate";
 import { PointsWalletPanel } from "@/components/PointsWalletPanel";
 
 const Dashboard = () => {
-  const [timeframe, setTimeframe] = useState("24h");
-  const [chain, setChain] = useState("all");
-  const [query, setQuery] = useState("");
-
   // Mixed positions: Points and Real Money
   const positions = [
     {
@@ -170,14 +164,14 @@ const Dashboard = () => {
           </div>
 
           {/* Filters */}
-          <GlobalFiltersBar
+          {/* <GlobalFiltersBar
             timeframe={timeframe}
             onTimeframeChange={setTimeframe}
             chain={chain}
             onChainChange={setChain}
             query={query}
             onQueryChange={setQuery}
-          />
+          /> */}
 
           {/* NEW UNIQUE LAYOUT - Bento Box Style */}
           <div className="grid lg:grid-cols-12 gap-4 mb-4">

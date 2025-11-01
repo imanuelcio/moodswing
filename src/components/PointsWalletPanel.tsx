@@ -95,49 +95,6 @@ export const PointsWalletPanel = ({
         </div>
       </div>
 
-      {/* Expiring Soon + Monthly Allocation */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="bg-muted/10 rounded-lg p-3 border border-border">
-          <div className="flex items-center gap-1.5 mb-2">
-            <Clock className="h-4 w-4 text-accent" />
-            <span className="text-xs text-muted-foreground">Expiring Soon</span>
-          </div>
-          <div className="font-mono font-bold text-lg text-accent">
-            {expiring.amount.toLocaleString()}
-          </div>
-          <div className="text-xs text-muted-foreground mt-1">
-            in {expiring.daysLeft}d
-          </div>
-        </div>
-
-        <div
-          className={`rounded-lg p-3 border ${
-            monthly.claimed
-              ? "bg-muted/10 border-border"
-              : "bg-gradient-to-br from-accent/10 to-primary/10 border-accent/30"
-          }`}
-        >
-          <div className="flex items-center gap-1.5 mb-2">
-            <Gift className="h-4 w-4 text-primary" />
-            <span className="text-xs text-muted-foreground">Monthly Drop</span>
-          </div>
-          <div className="font-mono font-bold text-lg">
-            {monthly.allocated.toLocaleString()}
-          </div>
-          {monthly.claimed ? (
-            <div className="text-xs text-muted-foreground mt-1">✓ Claimed</div>
-          ) : (
-            <Button
-              size="sm"
-              onClick={onClaim}
-              className="w-full mt-2 h-7 text-xs font-mono bg-primary hover:bg-primary/90"
-            >
-              Claim Now
-            </Button>
-          )}
-        </div>
-      </div>
-
       {/* Decay Buckets Visualization */}
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">

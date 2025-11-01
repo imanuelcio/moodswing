@@ -39,6 +39,7 @@ export const SiteHeader = () => {
     authError,
     disconnect,
   } = useWalletAuth();
+  console.log(chainId);
   const { open } = useWeb3Modal();
 
   return (
@@ -149,7 +150,7 @@ export const SiteHeader = () => {
                       Profile
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
+                  {/* <DropdownMenuItem asChild>
                     <Link
                       to="/b2b/console"
                       className="flex items-center gap-2 cursor-pointer"
@@ -157,7 +158,7 @@ export const SiteHeader = () => {
                       <Settings className="h-4 w-4" />
                       Manage API Keys
                     </Link>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={disconnect}
