@@ -23,13 +23,9 @@ interface Position {
 
 interface MyOpenPositionsProps {
   items: Position[];
-  onCloseEarly?: (id: string) => void;
 }
 
-export const MyOpenPositions = ({
-  items,
-  onCloseEarly,
-}: MyOpenPositionsProps) => {
+export const MyOpenPositions = ({ items }: MyOpenPositionsProps) => {
   const [countdowns, setCountdowns] = useState<Record<string, number>>({});
 
   useEffect(() => {

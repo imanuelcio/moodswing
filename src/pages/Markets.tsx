@@ -11,10 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { motion } from "framer-motion";
-import {
-  Search,
-  Loader2,
-} from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { getMarkets } from "@/hooks/market/api";
 
 interface Market {
@@ -47,18 +44,6 @@ interface Market {
   market_outcomes: any[];
 }
 
-// interface MarketsResponse {
-//   markets: Market[];
-//   pagination: {
-//     page: number;
-//     limit: number;
-//     total: number;
-//     totalPages: number;
-//     hasNext: boolean;
-//     hasPrev: boolean;
-//   };
-// }
-
 export const Markets = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -74,7 +59,11 @@ export const Markets = () => {
       try {
         setIsLoading(true);
         const data = await getMarkets();
-        console.log("✅ [MARKETS] Markets fetched successfully:", data.markets.length, "markets");
+        console.log(
+          "✅ [MARKETS] Markets fetched successfully:",
+          data.markets.length,
+          "markets"
+        );
         console.log("📊 [MARKETS] First market:", data.markets[0]);
         setMarkets(data.markets);
       } catch (err) {
@@ -172,50 +161,6 @@ export const Markets = () => {
     };
   };
 
-  // Calculate stats from actual markets data
-  // const totalVolume = sortedMarkets.reduce(
-  //   (acc, m) => acc + (m.id * 75000 + 500000),
-  //   0
-  // );
-  // const activeMarketsCount = sortedMarkets.filter(
-  //   (m) => m.status === "OPEN"
-  // ).length;
-  // const totalParticipants = sortedMarkets.reduce(
-  //   (acc, m) => acc + Math.floor(m.id * 85 + 200),
-  //   0
-  // );
-
-  // const stats = [
-  //   {
-  //     label: "Total Volume",
-  //     value: `$${(totalVolume / 1000000).toFixed(1)}M`,
-  //     icon: DollarSign,
-  //     change: "+15.3%",
-  //     trend: "up" as const,
-  //   },
-  //   {
-  //     label: "Active Markets",
-  //     value: activeMarketsCount.toString(),
-  //     icon: Activity,
-  //     change: `+${Math.floor(activeMarketsCount * 0.1)}`,
-  //     trend: "up" as const,
-  //   },
-  //   {
-  //     label: "Total Traders",
-  //     value: totalParticipants.toLocaleString(),
-  //     icon: Users,
-  //     change: `+${Math.floor(totalParticipants * 0.05)}`,
-  //     trend: "up" as const,
-  //   },
-  //   {
-  //     label: "Win Rate Avg",
-  //     value: "76.3%",
-  //     icon: Target,
-  //     change: "+2.1%",
-  //     trend: "up" as const,
-  //   },
-  // ];
-
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -237,44 +182,7 @@ export const Markets = () => {
                   culture
                 </p>
               </div>
-              {/* <Button className="bg-primary hover:bg-primary/90">
-                <Zap className="mr-2 h-4 w-4" />
-                Create Market
-              </Button> */}
             </div>
-
-            {/* Stats Grid */}
-            {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              {stats.map((stat, idx) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                  className="glass-card p-4 rounded-xl border border-border"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <stat.icon className="h-5 w-5 text-primary" />
-                    <Badge
-                      variant="outline"
-                      className={`text-xs ${
-                        stat.trend === "up"
-                          ? "border-green-500/50 text-green-500"
-                          : "border-red-500/50 text-red-500"
-                      }`}
-                    >
-                      {stat.change}
-                    </Badge>
-                  </div>
-                  <div className="text-2xl font-bold font-mono mb-1">
-                    {stat.value}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {stat.label}
-                  </div>
-                </motion.div>
-              ))}
-            </div> */}
           </motion.div>
 
           {/* Filters */}

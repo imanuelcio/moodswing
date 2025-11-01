@@ -217,7 +217,6 @@ const Dashboard = () => {
                   aprPct={stakingData.aprPct}
                   totalStaked={stakingData.totalStaked}
                   earned={stakingData.earned}
-                  onStake={(days) => console.log(`Staking for ${days} days`)}
                 />
               </motion.div>
             </div>

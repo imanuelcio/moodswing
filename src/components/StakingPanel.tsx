@@ -12,14 +12,12 @@ interface StakingMiniPanelProps {
   aprPct: number;
   totalStaked: number;
   earned: number;
-  onStake?: (days: number) => void;
 }
 
 export const StakingMiniPanel = ({
   aprPct,
   totalStaked,
   earned,
-  onStake,
 }: StakingMiniPanelProps) => {
   const stakingOptions = [
     { days: 14, label: "14d" },

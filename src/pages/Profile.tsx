@@ -1,6 +1,5 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { Footer } from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -8,7 +7,6 @@ import {
   Trophy,
   TrendingUp,
   Award,
-  Zap,
   Twitter,
   ExternalLink,
   Wallet,
