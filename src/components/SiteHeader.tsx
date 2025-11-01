@@ -14,7 +14,6 @@ import {
   Menu,
   X,
   User,
-  Settings,
   LogOut,
   Bell,
   Loader2,
