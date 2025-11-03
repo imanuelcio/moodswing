@@ -21,6 +21,8 @@ import LegalRisk from "./pages/LegalRisk";
 import NotFound from "./pages/NotFound";
 import { queryClient } from "./lib/queryclient";
 import "./lib/web3Modal"; // Initialize web3modal
+import CreatorTips from "./pages/Creators";
+import Staking from "./pages/Staking";
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -38,6 +40,8 @@ const App = () => (
           <Route path="/mint" element={<Mint />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/api-keys" element={<APIKeys />} />
+          <Route path="/staking" element={<Staking />} />
+          <Route path="/creators" element={<CreatorTips />} />
           <Route path="/b2b/console" element={<B2BConsole />} />
           <Route path="/docs" element={<Docs />} />
           <Route path="/legal/privacy" element={<LegalPrivacy />} />

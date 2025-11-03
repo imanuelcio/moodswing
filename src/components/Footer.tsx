@@ -5,14 +5,14 @@ export const Footer = () => {
   const footerLinks = {
     Product: [
       { label: "Dashboard", href: "/dashboard" },
-      { label: "Mint NFT", href: "/mint" },
+      { label: "Moodz NFT", href: "/mint" },
       { label: "Leaderboard", href: "/dashboard" },
     ],
-    Business: [
-      { label: "B2B Portal", href: "/b2b" },
-      { label: "API Access", href: "/b2b/console" },
-      { label: "Documentation", href: "/docs" },
-    ],
+    // Business: [
+    //   { label: "B2B Portal", href: "/b2b" },
+    //   { label: "API Access", href: "/b2b/console" },
+    //   { label: "Documentation", href: "/docs" },
+    // ],
     Legal: [
       { label: "Privacy Policy", href: "/legal/privacy" },
       { label: "Terms of Service", href: "/legal/terms" },
