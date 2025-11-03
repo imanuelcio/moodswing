@@ -13,15 +13,11 @@ import {
   TrendingUp,
   Lock,
   Clock,
-  Zap,
   Trophy,
-  Sparkles,
   Loader2,
   AlertCircle,
   CheckCircle2,
   Calendar,
-  DollarSign,
-  ArrowUpRight,
   Info,
   Unlock,
 } from "lucide-react";
@@ -122,11 +118,11 @@ const Staking = () => {
   const [isStaking, setIsStaking] = useState(false);
   const [stakeSuccess, setStakeSuccess] = useState(false);
   const [stakeError, setStakeError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   // Fetch staking data
   const fetchStakingData = async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
 
     try {
       const response = await fetch("/api/staking", {
@@ -141,7 +137,7 @@ const Staking = () => {
     } catch (err) {
       console.error("Staking fetch error:", err);
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
