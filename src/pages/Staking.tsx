@@ -190,7 +190,7 @@ const Staking = () => {
 
       if (!response.ok) throw new Error("Staking transaction failed");
 
-      const data = await response.json();
+      // const data = await response.json();
       setStakeSuccess(true);
 
       // Refresh data

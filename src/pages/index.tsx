@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -9,22 +8,18 @@ import { useLenis } from "@/hooks/useLenis";
 import {
   Zap,
   Trophy,
-  Shield,
   Database,
   BarChart3,
   Lock,
   Rocket,
-  Users,
   ArrowUpRight,
   Activity,
   Sparkles,
   Heart,
   MessageCircle,
   Target,
-  Gift,
   Star,
   Brain,
-  TrendingUp,
   Coins,
   Vote,
 } from "lucide-react";

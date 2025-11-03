@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Wallet, Lock, Sparkles, TrendingUp, Trophy, Zap } from "lucide-react";
+import { Wallet,  Sparkles } from "lucide-react";
 
 export const ConnectWalletPrompt = () => {
   return (

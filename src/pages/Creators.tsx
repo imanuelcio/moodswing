@@ -5,18 +5,16 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
 import {
   Gift,
   TrendingUp,
-  Heart,
   Sparkles,
   Loader2,
   AlertCircle,
   Trophy,
   Star,
-  MessageCircle,
   ThumbsUp,
   TrendingDown,
   Activity,
@@ -24,7 +22,6 @@ import {
   CheckCircle2,
   Target,
   Eye,
-  Zap,
 } from "lucide-react";
 import { TipPostModal } from "@/components/Tipcreatormodal";
 

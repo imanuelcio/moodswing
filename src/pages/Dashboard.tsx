@@ -6,7 +6,6 @@ import { ConnectWalletPrompt } from "@/components/ConnectWalletPrompt";
 import { Clock } from "lucide-react";
 
 import { OverviewCards } from "@/components/dashboard/OverviewCards";
-import { QuickActionsBar } from "@/components/dashboard/QuickActionsBar";
 import { ActivePredictions } from "@/components/dashboard/ActivePredictions";
 import { AISentimentFeed } from "@/components/dashboard/AISentimentFeed";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";

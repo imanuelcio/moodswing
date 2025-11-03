@@ -7,18 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useLenis } from "@/hooks/useLenis";
-import {
-  Sparkles,
-  Loader2,
-  AlertCircle,
-  RefreshCw,
-  Trophy,
-  Star,
-  Shield,
-  Gift,
-  Users,
-  TrendingUp,
-} from "lucide-react";
+import { Sparkles, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 
 // NFT Type based on PoC
 interface SentimentalNFT {
