@@ -10,6 +10,8 @@ import {
   TrendingUp,
   TrendingDown,
   Loader2,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Footer } from "@/components/Footer";
@@ -24,7 +26,7 @@ import { useMarketSSE } from "@/hooks/market/useMarketSSE";
 import { getMarketById } from "@/hooks/market/api";
 import type { Market } from "@/hooks/market/api";
 
-// Pyth price formatting - prices come with 8 decimals
+// Pyth price formatting
 function formatPythPrice(price: string | number, decimals: number = 8): number {
   const priceNum = typeof price === "string" ? parseFloat(price) : price;
   return priceNum / Math.pow(10, decimals);
@@ -32,7 +34,6 @@ function formatPythPrice(price: string | number, decimals: number = 8): number {
 
 // Format price untuk display
 function formatPrice(price: number, symbol: string): string {
-  // BTC, ETH - show 2 decimals
   if (symbol.includes("BTC") || symbol.includes("ETH")) {
     return price.toLocaleString("en-US", {
       minimumFractionDigits: 2,
@@ -40,7 +41,6 @@ function formatPrice(price: number, symbol: string): string {
     });
   }
 
-  // Stablecoins - show 4 decimals
   if (
     symbol.includes("USDC") ||
     symbol.includes("USDT") ||
@@ -52,7 +52,6 @@ function formatPrice(price: number, symbol: string): string {
     });
   }
 
-  // Others - show 2 decimals
   return price.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -97,7 +96,6 @@ export const MarketDetail = () => {
       const formattedPrice = formatPythPrice(data.price);
       setCurrentPrice(formattedPrice);
 
-      // Set initial price for 24h change calculation
       if (!initialPrice) {
         setInitialPrice(formattedPrice);
       } else {
@@ -128,7 +126,7 @@ export const MarketDetail = () => {
     );
   }
 
-  // Calculate outcomes based on current price and threshold
+  // Calculate outcomes
   const { resolution_rule } = market;
   const threshold = resolution_rule.threshold;
   const isAbove = currentPrice ? currentPrice > threshold : false;
@@ -148,6 +146,8 @@ export const MarketDetail = () => {
       price: yesPrice,
       change: priceChange24h,
       volume: 1851515.56,
+      color: "green",
+      icon: CheckCircle,
     },
     {
       key: "no",
@@ -156,6 +156,8 @@ export const MarketDetail = () => {
       price: noPrice,
       change: -priceChange24h,
       volume: 996046.84,
+      color: "red",
+      icon: XCircle,
     },
   ];
 
@@ -179,10 +181,6 @@ export const MarketDetail = () => {
 
   const selectedOutcomeData = outcomes.find((o) => o.key === selectedOutcome);
 
-  // const daysUntilClose = Math.floor(
-  //   (new Date(market.close_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  // );
-
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -194,7 +192,6 @@ export const MarketDetail = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            {/* Breadcrumb & Status */}
             <div className="flex items-center gap-3 mb-4">
               <Badge variant="outline" className="border-primary/50">
                 {market.category}
@@ -212,12 +209,10 @@ export const MarketDetail = () => {
               </Badge>
             </div>
 
-            {/* Title */}
             <h1 className="font-orbitron text-3xl md:text-4xl font-bold text-glow-red mb-4">
               {market.title}
             </h1>
 
-            {/* Description */}
             <p className="text-muted-foreground text-base max-w-4xl mb-6">
               {market.description}
             </p>
@@ -323,7 +318,7 @@ export const MarketDetail = () => {
                 </motion.div>
               )}
 
-              {/* Outcomes - Place Bet */}
+              {/* Outcomes - Side by Side with Strong Colors */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -336,56 +331,141 @@ export const MarketDetail = () => {
                       Place Your Bet
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    {outcomes.map((outcome) => (
-                      <div
-                        key={outcome.key}
-                        className="glass-card p-5 rounded-xl border border-border hover:border-primary/50 transition-all cursor-pointer group"
-                        onClick={() => handleBetClick(outcome.key)}
-                      >
-                        <div className="flex items-start justify-between mb-4">
-                          <div>
-                            <div className="text-xl font-bold mb-1">
-                              {outcome.name}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {outcome.description}
-                            </div>
-                          </div>
-                          <Badge
-                            variant="outline"
-                            className={`font-mono ${
-                              outcome.change > 0
-                                ? "border-green-500/50 text-green-500"
-                                : "border-red-500/50 text-red-500"
-                            }`}
+                  <CardContent>
+                    {/* Side by Side Bet Options */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {outcomes.map((outcome, idx) => {
+                        const OutcomeIcon = outcome.icon;
+                        const isYes = outcome.key === "yes";
+
+                        return (
+                          <motion.div
+                            key={outcome.key}
+                            initial={{ opacity: 0, x: idx === 0 ? -20 : 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.1 + idx * 0.1 }}
+                            className={`
+                              relative overflow-hidden rounded-2xl border-2 transition-all cursor-pointer group
+                              ${
+                                isYes
+                                  ? "border-green-500/50 bg-gradient-to-br from-green-500/10 via-green-500/5 to-transparent hover:border-green-500 hover:shadow-[0_0_30px_rgba(34,197,94,0.3)]"
+                                  : "border-red-500/50 bg-gradient-to-br from-red-500/10 via-red-500/5 to-transparent hover:border-red-500 hover:shadow-[0_0_30px_rgba(239,68,68,0.3)]"
+                              }
+                            `}
+                            onClick={() => handleBetClick(outcome.key)}
                           >
-                            {outcome.change > 0 ? (
-                              <ArrowUpRight className="h-3 w-3 mr-1" />
-                            ) : (
-                              <ArrowDownRight className="h-3 w-3 mr-1" />
-                            )}
-                            {Math.abs(outcome.change).toFixed(1)}%
-                          </Badge>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="text-4xl font-bold font-mono text-primary mb-1">
-                              {(outcome.price * 100).toFixed(1)}¢
+                            {/* Background Pattern */}
+                            <div className="absolute inset-0 opacity-5">
+                              <div
+                                className={`absolute inset-0 ${
+                                  isYes ? "bg-green-500" : "bg-red-500"
+                                }`}
+                              />
                             </div>
-                            <div className="text-xs text-muted-foreground">
-                              ${(outcome.volume / 1000000).toFixed(2)}M volume
+
+                            <div className="relative p-6 space-y-4">
+                              {/* Header with Icon */}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <div
+                                    className={`
+                                    p-3 rounded-xl ${
+                                      isYes
+                                        ? "bg-green-500/20 border border-green-500/30"
+                                        : "bg-red-500/20 border border-red-500/30"
+                                    }
+                                  `}
+                                  >
+                                    <OutcomeIcon
+                                      className={`
+                                      h-6 w-6 ${
+                                        isYes
+                                          ? "text-green-500"
+                                          : "text-red-500"
+                                      }
+                                    `}
+                                    />
+                                  </div>
+                                  <div>
+                                    <div
+                                      className={`
+                                      text-2xl font-bold font-orbitron ${
+                                        isYes
+                                          ? "text-green-500"
+                                          : "text-red-500"
+                                      }
+                                    `}
+                                    >
+                                      {outcome.name}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <Badge
+                                  variant="outline"
+                                  className={`font-mono ${
+                                    outcome.change > 0
+                                      ? "border-green-500/50 text-green-500"
+                                      : "border-red-500/50 text-red-500"
+                                  }`}
+                                >
+                                  {outcome.change > 0 ? (
+                                    <ArrowUpRight className="h-3 w-3 mr-1" />
+                                  ) : (
+                                    <ArrowDownRight className="h-3 w-3 mr-1" />
+                                  )}
+                                  {Math.abs(outcome.change).toFixed(1)}%
+                                </Badge>
+                              </div>
+
+                              {/* Description */}
+                              <div
+                                className={`
+                                text-sm font-medium px-3 py-2 rounded-lg ${
+                                  isYes
+                                    ? "bg-green-500/10 text-green-500/90"
+                                    : "bg-red-500/10 text-red-500/90"
+                                }
+                              `}
+                              >
+                                {outcome.description}
+                              </div>
+
+                              {/* Price Display */}
+                              <div className="space-y-2">
+                                <div
+                                  className={`
+                                  text-5xl font-bold font-mono ${
+                                    isYes ? "text-green-500" : "text-red-500"
+                                  }
+                                `}
+                                >
+                                  {(outcome.price * 100).toFixed(1)}¢
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  ${(outcome.volume / 1000000).toFixed(2)}M
+                                  volume
+                                </div>
+                              </div>
+
+                              {/* Buy Button */}
+                              <Button
+                                size="lg"
+                                className={`
+                                  w-full font-semibold group-hover:scale-105 transition-all ${
+                                    isYes
+                                      ? "bg-green-500 hover:bg-green-600 text-white shadow-[0_0_20px_rgba(34,197,94,0.3)]"
+                                      : "bg-red-500 hover:bg-red-600 text-white shadow-[0_0_20px_rgba(239,68,68,0.3)]"
+                                  }
+                                `}
+                              >
+                                Buy {outcome.name}
+                              </Button>
                             </div>
-                          </div>
-                          <Button
-                            size="lg"
-                            className="bg-primary hover:bg-primary/90 group-hover:scale-105 transition-transform"
-                          >
-                            Buy Shares
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
+                          </motion.div>
+                        );
+                      })}
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>

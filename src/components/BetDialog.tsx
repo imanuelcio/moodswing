@@ -6,24 +6,25 @@ import { Label } from "./ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 import {
   TrendingUp,
-  TrendingDown,
   Trophy,
   Wallet,
   CreditCard,
   AlertCircle,
   Check,
   Loader2,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "./ui/badge";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Alert, AlertDescription } from "./ui/alert";
-// import { usePlaceBet } from "../hooks/bet/useBetMarket";
+
 interface BetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   marketId: string;
-  outcomeName: string;
+  outcomeName: string; // "Yes" or "No"
   currentPrice: number;
 }
 
@@ -38,13 +39,16 @@ export const BetDialog = ({
   currentPrice,
 }: BetDialogProps) => {
   const [mode, setMode] = useState<BetMode>("prediction");
-  const [direction, setDirection] = useState<"BUY" | "SELL">("BUY");
   const [amount, setAmount] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("wallet");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [isProcessing, setIsProcessing] = useState(false);
 
   const userPoints = 5000;
   const userWalletBalance = 1250.5;
+
+  // Determine if this is a Yes or No bet
+  const isYesBet = outcomeName.toLowerCase() === "yes";
+  const direction = "BUY"; // Always BUY since we're buying shares of the chosen outcome
 
   const calculateShares = () => {
     if (!amount) return 0;
@@ -54,11 +58,8 @@ export const BetDialog = ({
   const calculatePotentialReturn = () => {
     if (!amount) return 0;
     const shares = calculateShares();
-    if (direction === "BUY") {
-      return shares * (1 - currentPrice);
-    } else {
-      return shares * currentPrice;
-    }
+    // If bet is correct, each share is worth $1
+    return shares * (1 - currentPrice);
   };
 
   const handlePlacePrediction = async () => {
@@ -73,19 +74,18 @@ export const BetDialog = ({
     setIsProcessing(true);
 
     try {
-      // Import placeBet from hooks
       const { placeBet } = await import("@/hooks/bet/api");
 
       console.log("🔄 [BET] Calling API...");
       const result = await placeBet({
         market_id: parseInt(marketId),
-        outcome_id: 1, // You'll need to pass actual outcome_id
+        outcome_id: 1,
         amount: parseFloat(amount),
       });
 
       console.log("✅ [BET] Bet placed successfully!", result);
       toast.success("Prediction placed!", {
-        description: `${direction} ${amount} points on ${outcomeName}`,
+        description: `${amount} points on ${outcomeName}`,
       });
 
       onOpenChange(false);
@@ -103,7 +103,6 @@ export const BetDialog = ({
     setIsProcessing(true);
 
     try {
-      // Step 1: Create bet order
       const orderResponse = await fetch("/api/v1/bets/pool", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -121,9 +120,7 @@ export const BetDialog = ({
 
       const { orderId, paymentUrl } = await orderResponse.json();
 
-      // Step 2: Process payment based on method
       if (paymentMethod === "wallet") {
-        // Direct wallet deduction
         const paymentResponse = await fetch(
           `/api/v1/payments/wallet/${orderId}`,
           {
@@ -135,12 +132,11 @@ export const BetDialog = ({
         if (!paymentResponse.ok) throw new Error("Payment failed");
 
         toast.success("Bet placed successfully!", {
-          description: `${direction} $${amount} on ${outcomeName}`,
+          description: `$${amount} on ${outcomeName}`,
         });
 
         onOpenChange(false);
       } else if (paymentMethod === "card" || paymentMethod === "crypto") {
-        // Redirect to payment gateway
         toast.info("Redirecting to payment gateway...");
         window.location.href = paymentUrl;
       }
@@ -170,7 +166,7 @@ export const BetDialog = ({
       if (paymentMethod === "wallet") {
         return parseFloat(amount) <= userWalletBalance;
       }
-      return true; // Card/crypto will be validated by payment gateway
+      return true;
     }
   };
 
@@ -188,6 +184,12 @@ export const BetDialog = ({
     return null;
   };
 
+  // Get icon and color based on outcome
+  const OutcomeIcon = isYesBet ? CheckCircle : XCircle;
+  const outcomeColor = isYesBet ? "text-green-500" : "text-red-500";
+  const outcomeBg = isYesBet ? "bg-green-500/10" : "bg-red-500/10";
+  const outcomeBorder = isYesBet ? "border-green-500/30" : "border-red-500/30";
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl glass-card border-border max-h-[90vh] overflow-y-auto">
@@ -198,6 +200,38 @@ export const BetDialog = ({
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Selected Outcome Display - PROMINENT */}
+          <div
+            className={`p-5 rounded-xl border-2 ${outcomeBorder} ${outcomeBg}`}
+          >
+            <div className="flex items-center gap-4">
+              <div
+                className={`p-3 rounded-xl ${outcomeBg} border ${outcomeBorder}`}
+              >
+                <OutcomeIcon className={`h-8 w-8 ${outcomeColor}`} />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span
+                    className={`text-2xl font-bold font-orbitron ${outcomeColor}`}
+                  >
+                    {outcomeName}
+                  </span>
+                  <Badge variant="outline" className="border-primary/50">
+                    Market #{marketId}
+                  </Badge>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Current price:{" "}
+                  <span className={`font-mono font-bold ${outcomeColor}`}>
+                    {(currentPrice * 100).toFixed(1)}¢
+                  </span>{" "}
+                  per share
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Mode Selection */}
           <div>
             <Label className="text-sm text-muted-foreground mb-3 block">
@@ -257,84 +291,33 @@ export const BetDialog = ({
             </Tabs>
           </div>
 
-          {/* Outcome Display */}
-          <div>
-            <Label className="text-sm text-muted-foreground">Outcome</Label>
-            <div className="mt-2 p-4 rounded-lg border border-border bg-background/50">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="font-medium text-foreground text-lg">
-                    {outcomeName}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Current odds:{" "}
-                    <span className="font-mono text-primary font-bold">
-                      {(currentPrice * 100).toFixed(1)}¢
-                    </span>
-                  </p>
-                </div>
-                <Badge variant="outline" className="border-primary/50">
-                  Market #{marketId}
-                </Badge>
-              </div>
-            </div>
-          </div>
-
-          {/* Direction Selection */}
-          <div>
-            <Label className="text-sm text-muted-foreground mb-3 block">
-              Position
-            </Label>
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                variant={direction === "BUY" ? "default" : "outline"}
-                onClick={() => setDirection("BUY")}
-                className="gap-2 h-auto py-4"
-                size="lg"
-              >
-                <TrendingUp className="h-5 w-5" />
-                <div className="text-left">
-                  <div>Buy Yes</div>
-                  <div className="text-xs opacity-70">Long position</div>
-                </div>
-              </Button>
-              <Button
-                variant={direction === "SELL" ? "default" : "outline"}
-                onClick={() => setDirection("SELL")}
-                className="gap-2 h-auto py-4"
-                size="lg"
-              >
-                <TrendingDown className="h-5 w-5" />
-                <div className="text-left">
-                  <div>Buy No</div>
-                  <div className="text-xs opacity-70">Short position</div>
-                </div>
-              </Button>
-            </div>
-          </div>
-
           {/* Amount Input */}
           <div>
-            <Label htmlFor="amount" className="text-sm text-muted-foreground">
+            <Label
+              htmlFor="amount"
+              className="text-sm text-muted-foreground mb-2 block"
+            >
               {mode === "prediction" ? "Points to Stake" : "Amount (USD)"}
             </Label>
-            <div className="relative mt-2">
+            <div className="relative">
               <Input
                 id="amount"
                 type="number"
-                placeholder={mode === "prediction" ? "100" : "10.00"}
+                placeholder={
+                  mode === "prediction" ? "Enter points..." : "Enter amount..."
+                }
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="font-mono text-lg pr-16"
+                className="font-mono text-lg pr-16 h-14"
                 min="0"
                 step={mode === "prediction" ? "1" : "0.01"}
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-mono">
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-mono font-semibold">
                 {mode === "prediction" ? "pts" : "USD"}
               </div>
             </div>
             {getInsufficientFundsMessage() && (
-              <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+              <p className="text-xs text-red-500 mt-2 flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {getInsufficientFundsMessage()}
               </p>
@@ -379,25 +362,6 @@ export const BetDialog = ({
                 onValueChange={(v) => setPaymentMethod(v as PaymentMethod)}
               >
                 <div className="space-y-2">
-                  {/* <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50 cursor-pointer">
-                    <RadioGroupItem value="wallet" id="wallet" />
-                    <Label
-                      htmlFor="wallet"
-                      className="flex-1 cursor-pointer flex items-center gap-2"
-                    >
-                      <Wallet className="h-4 w-4" />
-                      <div>
-                        <div>Wallet Balance</div>
-                        <div className="text-xs text-muted-foreground">
-                          Available: ${userWalletBalance.toFixed(2)}
-                        </div>
-                      </div>
-                    </Label>
-                    {paymentMethod === "wallet" && (
-                      <Check className="h-4 w-4 text-primary" />
-                    )}
-                  </div> */}
-
                   <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50 cursor-pointer">
                     <RadioGroupItem value="card" id="card" />
                     <Label
@@ -416,25 +380,6 @@ export const BetDialog = ({
                       <Check className="h-4 w-4 text-primary" />
                     )}
                   </div>
-
-                  {/* <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50 cursor-pointer">
-                    <RadioGroupItem value="crypto" id="crypto" />
-                    <Label
-                      htmlFor="crypto"
-                      className="flex-1 cursor-pointer flex items-center gap-2"
-                    >
-                      <Wallet className="h-4 w-4" />
-                      <div>
-                        <div>Cryptocurrency</div>
-                        <div className="text-xs text-muted-foreground">
-                          USDC, USDT, ETH
-                        </div>
-                      </div>
-                    </Label>
-                    {paymentMethod === "crypto" && (
-                      <Check className="h-4 w-4 text-primary" />
-                    )}
-                  </div> */}
                 </div>
               </RadioGroup>
             </div>
@@ -442,46 +387,57 @@ export const BetDialog = ({
 
           {/* Summary */}
           {amount && parseFloat(amount) > 0 && (
-            <div className="p-4 rounded-lg border border-primary/20 bg-primary/5 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Position</span>
-                <span className="font-medium text-foreground">
-                  {direction === "BUY" ? "Yes (Long)" : "No (Short)"}
-                </span>
+            <div
+              className={`p-4 rounded-lg border-2 ${outcomeBorder} ${outcomeBg} space-y-3`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingUp className={`h-4 w-4 ${outcomeColor}`} />
+                <span className="font-semibold text-sm">Bet Summary</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Stake</span>
-                <span className="font-mono text-foreground font-bold">
-                  {mode === "prediction"
-                    ? `${parseFloat(amount).toLocaleString()} points`
-                    : `$${parseFloat(amount).toFixed(2)}`}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Estimated shares</span>
-                <span className="font-mono text-foreground">
-                  {calculateShares().toFixed(2)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm pt-2 border-t border-primary/20">
-                <span className="text-muted-foreground">Potential return</span>
-                <span className="font-mono text-green-500 font-bold">
-                  {mode === "prediction"
-                    ? `+${(
-                        parseFloat(amount) + calculatePotentialReturn()
-                      ).toFixed(0)} pts`
-                    : `+$${(
-                        parseFloat(amount) + calculatePotentialReturn()
-                      ).toFixed(2)}`}
-                </span>
-              </div>
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Max profit</span>
-                <span className="font-mono">
-                  {mode === "prediction"
-                    ? `${calculatePotentialReturn().toFixed(0)} pts`
-                    : `$${calculatePotentialReturn().toFixed(2)}`}
-                </span>
+
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Betting on</span>
+                  <span className={`font-bold ${outcomeColor}`}>
+                    {outcomeName}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Your stake</span>
+                  <span className="font-mono font-bold">
+                    {mode === "prediction"
+                      ? `${parseFloat(amount).toLocaleString()} points`
+                      : `$${parseFloat(amount).toFixed(2)}`}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Shares you get</span>
+                  <span className="font-mono">
+                    {calculateShares().toFixed(2)} shares
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm pt-2 border-t border-border/50">
+                  <span className="text-muted-foreground">
+                    If {outcomeName} wins
+                  </span>
+                  <span className="font-mono text-green-500 font-bold">
+                    {mode === "prediction"
+                      ? `+${(
+                          parseFloat(amount) + calculatePotentialReturn()
+                        ).toFixed(0)} pts`
+                      : `+$${(
+                          parseFloat(amount) + calculatePotentialReturn()
+                        ).toFixed(2)}`}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Max profit</span>
+                  <span className="font-mono">
+                    {mode === "prediction"
+                      ? `${calculatePotentialReturn().toFixed(0)} pts`
+                      : `$${calculatePotentialReturn().toFixed(2)}`}
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -498,7 +454,11 @@ export const BetDialog = ({
             </Button>
             <Button
               onClick={handleConfirm}
-              className="flex-1"
+              className={`flex-1 font-semibold ${
+                isYesBet
+                  ? "bg-green-500 hover:bg-green-600"
+                  : "bg-red-500 hover:bg-red-600"
+              }`}
               disabled={!isValid() || isProcessing}
             >
               {isProcessing ? (
@@ -507,11 +467,7 @@ export const BetDialog = ({
                   Processing...
                 </>
               ) : (
-                <>
-                  Confirm Bet
-                  {mode === "prediction" && ` (${amount} pts)`}
-                  {mode === "pool" && ` ($${amount})`}
-                </>
+                <>Confirm Bet on {outcomeName}</>
               )}
             </Button>
           </div>

@@ -108,14 +108,6 @@ const navigationConfig = {
         available: false,
         description: "Vote on proposals",
       },
-      {
-        label: "Analytics",
-        href: "/analytics",
-        icon: BarChart3,
-        available: false,
-        badge: "Premium",
-        description: "Advanced insights",
-      },
     ],
   },
 
@@ -361,14 +353,14 @@ export const SiteHeader = () => {
                           <span className="text-sm font-medium">
                             {item.label}
                           </span>
-                          {item.badge && (
+                          {/* {item.badge && (
                             <Badge
                               variant="outline"
                               className="text-[10px] px-1.5"
                             >
                               {item.badge}
                             </Badge>
-                          )}
+                          )} */}
                         </div>
                         {item.description && (
                           <p className="text-xs text-muted-foreground mt-0.5">
@@ -718,14 +710,14 @@ export const SiteHeader = () => {
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span>{item.label}</span>
-                          {item.badge && (
+                          {/* {item.badge && (
                             <Badge
                               variant="outline"
                               className="text-[10px] px-1.5"
                             >
                               {item.badge}
                             </Badge>
-                          )}
+                          )} */}
                         </div>
                         {item.description && (
                           <p className="text-xs text-muted-foreground/70 mt-0.5">

@@ -23,6 +23,8 @@ import { queryClient } from "./lib/queryclient";
 import "./lib/web3Modal"; // Initialize web3modal
 import CreatorTips from "./pages/Creators";
 import Staking from "./pages/Staking";
+import Governance from "./pages/Governance";
+import Analytics from "./pages/Analytics";
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -37,8 +39,10 @@ const App = () => (
           <Route path="/leaderboards" element={<Leaderboards />} />
           <Route path="/me" element={<Profile />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/governance" element={<Governance />} />
           <Route path="/mint" element={<Mint />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/analytics" element={<Analytics />} />
           <Route path="/api-keys" element={<APIKeys />} />
           <Route path="/staking" element={<Staking />} />
           <Route path="/creators" element={<CreatorTips />} />
