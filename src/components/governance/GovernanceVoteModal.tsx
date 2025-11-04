@@ -46,7 +46,7 @@ interface VoteModalProps {
 
 type VoteChoice = "for" | "against" | "abstain";
 
-export const VoteModal = ({
+export const GovernanceVoteModal = ({
   open,
   onOpenChange,
   proposal,

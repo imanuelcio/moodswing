@@ -28,7 +28,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { CreateProposalModal } from "@/components/governance/CreateProposalModal";
-import { VoteModal } from "@/components/governance/votemodal";
+import { GovernanceVoteModal } from "@/components/governance/GovernanceVoteModal";
 
 // Types
 interface Proposal {
@@ -797,7 +797,7 @@ const Governance = () => {
       />
 
       {selectedProposal && (
-        <VoteModal
+        <GovernanceVoteModal
           open={voteModalOpen}
           onOpenChange={setVoteModalOpen}
           proposal={selectedProposal}
