@@ -45,3 +45,12 @@ export async function getMe(): Promise<any> {
     throw error;
   }
 }
+
+export async function logout(): Promise<any> {
+  try {
+    const { data } = await api.post("/auth/logout");
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}

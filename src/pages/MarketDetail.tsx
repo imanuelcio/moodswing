@@ -22,15 +22,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BetDialog } from "@/components/BetDialog";
 import { LiveBets } from "@/components/LiveBets";
 import { PositionsTable } from "@/components/PositionsTable";
-import { useMarketSSE } from "@/hooks/market/useMarketSSE";
+import { CryptoChart } from "@/components/MarketChart";
+import { useBinanceSSE } from "@/hooks/market/useMarketSSE";
 import { getMarketById } from "@/hooks/market/api";
 import type { Market } from "@/hooks/market/api";
-
-// Pyth price formatting
-function formatPythPrice(price: string | number, decimals: number = 8): number {
-  const priceNum = typeof price === "string" ? parseFloat(price) : price;
-  return priceNum / Math.pow(10, decimals);
-}
 
 // Format price untuk display
 function formatPrice(price: number, symbol: string): string {
@@ -65,9 +60,6 @@ export const MarketDetail = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [market, setMarket] = useState<Market | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPrice, setCurrentPrice] = useState<number | null>(null);
-  const [priceChange24h, setPriceChange24h] = useState<number>(0);
-  const [initialPrice, setInitialPrice] = useState<number | null>(null);
 
   // Fetch initial market data
   useEffect(() => {
@@ -88,22 +80,26 @@ export const MarketDetail = () => {
     fetchMarket();
   }, [id]);
 
-  // Connect to SSE for real-time price updates
-  const { priceData } = useMarketSSE({
+  // Connect to Binance SSE for real-time price updates
+  const {
+    klineData,
+    historicalData,
+    isConnected,
+    getCurrentPrice,
+    getPriceChange,
+  } = useBinanceSSE({
     marketId: id || "",
     enabled: !!id && !!market,
     onUpdate: (data) => {
-      const formattedPrice = formatPythPrice(data.price);
-      setCurrentPrice(formattedPrice);
-
-      if (!initialPrice) {
-        setInitialPrice(formattedPrice);
-      } else {
-        const change = ((formattedPrice - initialPrice) / initialPrice) * 100;
-        setPriceChange24h(change);
-      }
+      console.log("📊 Received Binance update:", data);
+    },
+    onError: (error) => {
+      console.error("❌ Binance SSE error:", error);
     },
   });
+
+  const currentPrice = getCurrentPrice();
+  const priceChange24h = getPriceChange();
 
   if (isLoading) {
     return (
@@ -207,6 +203,21 @@ export const MarketDetail = () => {
                 <Activity className="h-3 w-3 mr-1 animate-pulse" />
                 {market.status}
               </Badge>
+              <Badge
+                variant="outline"
+                className={`${
+                  isConnected
+                    ? "border-green-500/50 text-green-500"
+                    : "border-red-500/50 text-red-500"
+                }`}
+              >
+                <div
+                  className={`w-2 h-2 rounded-full mr-2 ${
+                    isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"
+                  }`}
+                />
+                {isConnected ? "Live Data" : "Connecting..."}
+              </Badge>
             </div>
 
             <h1 className="font-orbitron text-3xl md:text-4xl font-bold text-glow-red mb-4">
@@ -222,99 +233,21 @@ export const MarketDetail = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Column - Price & Outcomes */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Live Price Card */}
-              {currentPrice && (
+              {/* Real-time Chart */}
+              {historicalData.length > 0 && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 }}
                 >
-                  <Card className="glass-card border-primary/30 overflow-hidden">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-6">
-                        <div>
-                          <div className="text-sm text-muted-foreground mb-2">
-                            Current Market Price
-                          </div>
-                          <div className="flex items-baseline gap-3">
-                            <div className="text-5xl font-bold font-mono text-primary">
-                              ${formatPrice(currentPrice, market.symbol)}
-                            </div>
-                            <Badge
-                              variant="outline"
-                              className={`text-base ${
-                                priceChange24h >= 0
-                                  ? "border-green-500/50 text-green-500"
-                                  : "border-red-500/50 text-red-500"
-                              }`}
-                            >
-                              {priceChange24h >= 0 ? (
-                                <TrendingUp className="h-4 w-4 mr-1" />
-                              ) : (
-                                <TrendingDown className="h-4 w-4 mr-1" />
-                              )}
-                              {Math.abs(priceChange24h).toFixed(2)}%
-                            </Badge>
-                          </div>
-                          <div className="text-sm text-muted-foreground mt-2">
-                            {market.symbol} • {priceData?.source}
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm text-muted-foreground mb-1">
-                            Threshold
-                          </div>
-                          <div className="text-2xl font-bold font-mono">
-                            ${threshold.toLocaleString()}
-                          </div>
-                          <Badge
-                            className={`mt-2 ${
-                              isAbove
-                                ? "bg-green-500/20 text-green-500 border-green-500/50"
-                                : "bg-red-500/20 text-red-500 border-red-500/50"
-                            }`}
-                          >
-                            {isAbove ? "Above" : "Below"}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      {/* Price Info */}
-                      <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border">
-                        <div>
-                          <div className="text-xs text-muted-foreground mb-1">
-                            Last Update
-                          </div>
-                          <div className="text-sm font-mono">
-                            {priceData
-                              ? new Date(priceData.ts).toLocaleTimeString()
-                              : "-"}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground mb-1">
-                            Confidence
-                          </div>
-                          <div className="text-sm font-mono">
-                            ±$
-                            {priceData
-                              ? formatPrice(
-                                  formatPythPrice(priceData.conf),
-                                  market.symbol
-                                )
-                              : "-"}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground mb-1">
-                            Source
-                          </div>
-                          <div className="text-sm font-mono">
-                            {priceData?.source || "N/A"}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <CryptoChart
+                    data={historicalData}
+                    currentKline={klineData?.data}
+                    symbol={market.symbol}
+                    interval="1m"
+                    priceChange={priceChange24h}
+                    isConnected={isConnected}
+                  />
                 </motion.div>
               )}
 
@@ -597,7 +530,7 @@ export const MarketDetail = () => {
               </motion.div>
 
               {/* Price Feed Info */}
-              {priceData && (
+              {klineData && (
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -613,31 +546,36 @@ export const MarketDetail = () => {
                     <CardContent className="space-y-3 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Source</span>
-                        <span className="font-mono">{priceData.source}</span>
+                        <span className="font-mono">Binance</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Price ID</span>
-                        <code className="font-mono text-xs bg-muted px-2 py-1 rounded truncate max-w-[180px]">
-                          {priceData.priceId.slice(0, 8)}...
-                          {priceData.priceId.slice(-6)}
-                        </code>
+                        <span className="text-muted-foreground">Interval</span>
+                        <Badge variant="outline">{klineData.interval}</Badge>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">
                           Last Update
                         </span>
                         <span className="font-mono">
-                          {new Date(priceData.ts).toLocaleTimeString()}
+                          {new Date(
+                            klineData.data.close_time
+                          ).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Trades</span>
+                        <span className="font-mono">
+                          {klineData.data.trades_count.toLocaleString()}
                         </span>
                       </div>
                       <div className="pt-3 border-t border-border">
                         <a
-                          href={`https://pyth.network/price-feeds/${priceData.priceId}`}
+                          href={`https://www.binance.com/en/trade/${market.symbol}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary hover:underline text-xs flex items-center gap-1"
                         >
-                          View on Pyth Network
+                          View on Binance
                           <ArrowUpRight className="h-3 w-3" />
                         </a>
                       </div>

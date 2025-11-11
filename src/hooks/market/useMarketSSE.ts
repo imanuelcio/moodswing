@@ -1,97 +1,136 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
-interface PriceUpdate {
-  symbol: string;
-  priceId: string;
-  source: string;
-  price: string;
-  conf: string;
-  ts: string;
+interface KlineData {
+  open_time: string;
+  close_time: string;
+  open: string;
+  high: string;
+  low: string;
+  close: string;
+  base_volume: string;
+  quote_volume: string;
+  trades_count: number;
+  is_closed: boolean;
 }
 
-interface UseMarketSSEOptions {
+interface BinanceSSEEvent {
+  type: "kline.tick";
+  interval: string;
+  data: KlineData;
+}
+
+interface UseBinanceSSEOptions {
   marketId: string;
   enabled?: boolean;
   token?: string;
-  onUpdate?: (data: PriceUpdate) => void;
+  onUpdate?: (data: BinanceSSEEvent) => void;
   onError?: (error: Error) => void;
 }
 
-export function useMarketSSE({
+export function useBinanceSSE({
   marketId,
   enabled = true,
   token,
   onUpdate,
   onError,
-}: UseMarketSSEOptions) {
-  const [priceData, setPriceData] = useState<PriceUpdate | null>(null);
+}: UseBinanceSSEOptions) {
+  const [klineData, setKlineData] = useState<BinanceSSEEvent | null>(null);
+  const [historicalData, setHistoricalData] = useState<KlineData[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // ✅ CRITICAL FIX: Store callbacks in refs to prevent re-render loop
+  const onUpdateRef = useRef(onUpdate);
+  const onErrorRef = useRef(onError);
+
+  // Update refs when callbacks change
   useEffect(() => {
-    if (!enabled || !marketId) return;
+    onUpdateRef.current = onUpdate;
+  }, [onUpdate]);
+
+  useEffect(() => {
+    onErrorRef.current = onError;
+  }, [onError]);
+
+  useEffect(() => {
+    if (!enabled || !marketId) {
+      console.log("⏸️ SSE disabled or no marketId");
+      return;
+    }
 
     const connectSSE = () => {
       try {
         if (eventSourceRef.current) {
+          console.log("🔄 Closing existing connection...");
           eventSourceRef.current.close();
         }
 
         const apiUrl = import.meta.env.VITE_API_URL;
-        let url = `${apiUrl}/sse/markets/${marketId}`;
+        let url = `${apiUrl}/binance/markets/${marketId}`;
 
         if (token) {
           url += `?token=${encodeURIComponent(token)}`;
         }
 
+        console.log("🔌 Connecting to Binance SSE:", url);
         const eventSource = new EventSource(url);
 
         eventSource.onopen = () => {
+          console.log("✅ Binance SSE Connected");
           setIsConnected(true);
           setError(null);
         };
 
-        // ⭐ PENTING: Listen ke event "price" (bukan default onmessage)
-        eventSource.addEventListener("price", (event) => {
-          try {
-            const data: PriceUpdate = JSON.parse(event.data);
-            setPriceData(data);
-            onUpdate?.(data);
-          } catch (err) {
-            console.error("Failed to parse price event:", err, event.data);
-          }
-        });
-
-        // Optional: Listen ke event "connected" jika ada
-        // eventSource.addEventListener("connected", (event) => {
-        //   console.log("📡 Connected event:", event.data);
-        // });
-
-        // Fallback: Default message handler (jika ada message tanpa event name)
+        // Use onmessage since backend doesn't send event name
         eventSource.onmessage = (event) => {
           try {
-            const data: PriceUpdate = JSON.parse(event.data);
-            setPriceData(data);
-            onUpdate?.(data);
+            const data: BinanceSSEEvent = JSON.parse(event.data);
+
+            // Filter only kline.tick messages
+            if (data.type === "kline.tick") {
+              console.log("📊 Kline Update:", data);
+              setKlineData(data);
+
+              // Update historical data
+              setHistoricalData((prev) => {
+                const existingIndex = prev.findIndex(
+                  (item) => item.open_time === data.data.open_time
+                );
+
+                if (existingIndex !== -1) {
+                  const newData = [...prev];
+                  newData[existingIndex] = data.data;
+                  return newData.slice(-100);
+                } else {
+                  const newData = [...prev, data.data];
+                  return newData.slice(-100);
+                }
+              });
+
+              // ✅ Use ref instead of direct callback
+              onUpdateRef.current?.(data);
+            }
           } catch (err) {
-            console.error("Failed to parse SSE message:", err);
+            console.error("Failed to parse SSE message:", err, event.data);
           }
         };
 
         eventSource.onerror = (err) => {
-          console.error("❌ SSE Error:", err);
+          console.error("❌ Binance SSE Error:", err);
           setIsConnected(false);
 
-          const error = new Error("SSE connection failed");
+          const error = new Error("Binance SSE connection failed");
           setError(error);
-          onError?.(error);
 
-          // Cleanup and attempt reconnect after 3 seconds
+          // ✅ Use ref instead of direct callback
+          onErrorRef.current?.(error);
+
+          // Cleanup and attempt reconnect
           eventSource.close();
           reconnectTimeoutRef.current = setTimeout(() => {
-            console.log("🔄 Attempting to reconnect SSE...");
+            console.log("🔄 Attempting to reconnect Binance SSE...");
             connectSSE();
           }, 3000);
         };
@@ -99,16 +138,21 @@ export function useMarketSSE({
         eventSourceRef.current = eventSource;
       } catch (err) {
         const error =
-          err instanceof Error ? err : new Error("Failed to connect SSE");
+          err instanceof Error
+            ? err
+            : new Error("Failed to connect Binance SSE");
+        console.error("Failed to create EventSource:", error);
         setError(error);
-        onError?.(error);
+        onErrorRef.current?.(error);
       }
     };
 
+    console.log("🚀 Starting SSE connection...");
     connectSSE();
 
-    // Cleanup function
+    // Cleanup
     return () => {
+      console.log("🔌 Closing Binance SSE connection (cleanup)");
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
@@ -118,11 +162,28 @@ export function useMarketSSE({
       }
       setIsConnected(false);
     };
-  }, [marketId, enabled, token, onUpdate, onError]);
+  }, [marketId, enabled, token]); // ✅ FIXED: Remove onUpdate and onError from deps!
+
+  // Helper functions
+  const getCurrentPrice = useCallback(() => {
+    return klineData ? parseFloat(klineData.data.close) : null;
+  }, [klineData]);
+
+  const getPriceChange = useCallback(() => {
+    if (!klineData || historicalData.length < 2) return 0;
+
+    const firstPrice = parseFloat(historicalData[0].open);
+    const currentPrice = parseFloat(klineData.data.close);
+
+    return ((currentPrice - firstPrice) / firstPrice) * 100;
+  }, [klineData, historicalData]);
 
   return {
-    priceData,
+    klineData,
+    historicalData,
     isConnected,
     error,
+    getCurrentPrice,
+    getPriceChange,
   };
 }

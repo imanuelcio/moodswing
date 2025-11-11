@@ -243,9 +243,9 @@ export const BetDialog = ({
                   <Trophy className="h-4 w-4" />
                   Prediction (Points)
                 </TabsTrigger>
-                <TabsTrigger value="pool" className="gap-2">
+                <TabsTrigger disabled value="pool" className="gap-2">
                   <Wallet className="h-4 w-4" />
-                  Pool (Real Money)
+                  Pool (Coming Soon)
                 </TabsTrigger>
               </TabsList>
 
@@ -442,7 +442,6 @@ export const BetDialog = ({
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="flex gap-3 pt-2">
             <Button
               variant="outline"

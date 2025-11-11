@@ -25,34 +25,40 @@ import CreatorTips from "./pages/Creators";
 import Staking from "./pages/Staking";
 import Governance from "./pages/Governance";
 import Analytics from "./pages/Analytics";
+import { SolanaWalletProvider } from "./components/SolanaWalletProvider";
+// import { ProtectedRoute } from "./components/ProtectedRoute";
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       {/* <Toaster /> */}
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/markets" element={<Markets />} />
-          <Route path="/markets/:id" element={<MarketDetail />} />
-          <Route path="/me/create" element={<Create />} />
-          <Route path="/leaderboards" element={<Leaderboards />} />
-          <Route path="/me" element={<Profile />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/governance" element={<Governance />} />
-          <Route path="/mint" element={<Mint />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/api-keys" element={<APIKeys />} />
-          <Route path="/staking" element={<Staking />} />
-          <Route path="/creators" element={<CreatorTips />} />
-          <Route path="/b2b/console" element={<B2BConsole />} />
-          <Route path="/docs" element={<Docs />} />
-          <Route path="/legal/privacy" element={<LegalPrivacy />} />
-          <Route path="/legal/terms" element={<LegalTerms />} />
-          <Route path="/legal/risk" element={<LegalRisk />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <SolanaWalletProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/markets" element={<Markets />} />
+            <Route path="/markets/:id" element={<MarketDetail />} />
+            <Route path="/me/create" element={<Create />} />
+            <Route path="/leaderboards" element={<Leaderboards />} />
+            {/* <ProtectedRoute> */}
+            <Route path="/me" element={<Profile />} />
+            {/* </ProtectedRoute> */}
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/governance" element={<Governance />} />
+            <Route path="/mint" element={<Mint />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/api-keys" element={<APIKeys />} />
+            <Route path="/staking" element={<Staking />} />
+            <Route path="/creators" element={<CreatorTips />} />
+            <Route path="/b2b/console" element={<B2BConsole />} />
+            <Route path="/docs" element={<Docs />} />
+            <Route path="/legal/privacy" element={<LegalPrivacy />} />
+            <Route path="/legal/terms" element={<LegalTerms />} />
+            <Route path="/legal/risk" element={<LegalRisk />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </SolanaWalletProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
